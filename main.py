@@ -8,7 +8,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 
 
-
 def login():
     try:
         # Wait for the email field and enter the username
@@ -127,24 +126,40 @@ def add_random_items_to_cart():
         print("Error adding items to cart:", e)
 
 
-def selectprofile():
-    base_profile_dir = './profiles'
-    profile_name = username
-    profile_path = os.path.join(base_profile_dir, profile_name)
+def selectprofile(username):
+    # Use an absolute path for the profile directory, e.g., '/home/user/profiles' or 'C:\\profiles'
+    base_profile_dir = os.path.abspath('./profiles')
+    print(f"Base Profile Directory: {base_profile_dir}")
+
+    # Create the base directory if it doesn't exist
+    if not os.path.exists(base_profile_dir):
+        os.makedirs(base_profile_dir)
+        print(f"Created base directory at {base_profile_dir}")
+
+    # Complete path for the new profile
+    profile_path = os.path.join(base_profile_dir, username)
+    print(f"Profile Path: {profile_path}")
+
+    # Check if the profile directory exists
     if not os.path.exists(profile_path):
         os.makedirs(profile_path)
+        print(f"Created profile directory at {profile_path}")
+
+    # Set up Chrome options to use the new profile
     chrome_options = Options()
     chrome_options.add_argument(f'user-data-dir={profile_path}')
     return chrome_options
+
+
+# In your main function, call selectprofile with the username
 
 if __name__ == "__main__":
     url = "https://jng-fnd2-zpqy7.ondigitalocean.app"
     username = "mbugua@jungopharm.com"
     password = "123456789"
-    chrome_options = selectprofile()
-    driver = webdriver.Chrome(options=chrome_options)
+    chrome_option = selectprofile("mbugua@jungopharm.com")
+    driver = webdriver.Chrome(options=chrome_option)
     driver.get(url)
     login()
     handle_modal()
     sell_on_pos()
-
