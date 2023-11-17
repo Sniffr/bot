@@ -151,13 +151,11 @@ def selectprofile(username):
     return chrome_options
 
 
-# In your main function, call selectprofile with the username
-
 if __name__ == "__main__":
     url = "https://jng-fnd2-zpqy7.ondigitalocean.app"
-    username = "mbugua@jungopharm.com"
-    password = "123456789"
-    chrome_option = selectprofile("mbugua@jungopharm.com")
+    username = "lilostitchhh6@gmail.com"
+    password = "12345678"
+    chrome_option = selectprofile(username)
     driver = webdriver.Chrome(options=chrome_option)
     driver.get(url)
     login()
