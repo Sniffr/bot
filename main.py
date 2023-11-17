@@ -6,28 +6,48 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
+import time
+import random
+from selenium.webdriver.common.action_chains import ActionChains
+
+
+def random_delay(min_seconds, max_seconds):
+    time.sleep(random.uniform(min_seconds, max_seconds))
+
+
+def type_like_human(field, text):
+    for char in text:
+        field.send_keys(char)
+        random_delay(0.1, 0.3)
+
+
+def human_like_click(element):
+    random_delay(0.5, 2)
+    ActionChains(driver).move_to_element(element).click().perform()
+    random_delay(0.5, 1)
 
 
 def login():
     try:
-        # Wait for the email field and enter the username
+        # Wait for the email field
         email_field = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "email"))
         )
-        email_field.send_keys(username)
+        type_like_human(email_field, username)
+        random_delay(1, 2)
 
-        # Wait for the password field and enter the password
+        # Wait for the password field
         password_field = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "password"))
         )
-        password_field.send_keys(password)
+        type_like_human(password_field, password)
+        random_delay(1, 2)
 
+        # Click login button
         login_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Login')]"))
         )
-        login_button.click()
-
-        # Add any additional actions post-login
+        human_like_click(login_button)
 
     except Exception as e:
         print(e)
@@ -40,11 +60,12 @@ def handle_modal():
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, ".MuiBox-root"))
         )
+        random_delay(1, 2)
 
-        # Locate the Dismiss button and click it
+        # Locate and click the Dismiss button
         dismiss_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Dismiss')]")))
-        dismiss_button.click()
+        human_like_click(dismiss_button)
 
     except Exception as e:
         print("No modal found or other error:", e)
@@ -63,6 +84,7 @@ def sell_on_pos():
         add_random_items_to_cart()
         checkout()
     except Exception as e:
+        driver.save_screenshot('screenshot_pos.png')  # Saves a screenshot to verify the window size
         print(e)
         driver.quit()
 
@@ -99,32 +121,23 @@ def checkout():
 
 def add_random_items_to_cart():
     try:
-        # Wait for and find all SVGs that match the criteria
+        # Find all SVGs
         svg_elements = WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located(
                 (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
             )
         )
 
-        # Get the parent button elements of the selected SVGs
+        # Select and click buttons
         add_buttons = [driver.execute_script("return arguments[0].parentNode;", svg) for svg in svg_elements]
-
-        # Randomly select three buttons
         if len(add_buttons) >= 3:
             selected_buttons = random.sample(add_buttons, 3)
-        else:
-            print("Not enough items to add to cart.")
-            return
-
-        # Click on each of the selected buttons
-        for button in selected_buttons:
-            # Scroll the button into view and click
-            driver.execute_script("arguments[0].scrollIntoView(true);", button)
-            button.click()
+            for button in selected_buttons:
+                human_like_click(button)
+                random_delay(0.5, 1.5)
 
     except Exception as e:
         print("Error adding items to cart:", e)
-
 
 def selectprofile(username):
     # Use an absolute path for the profile directory, e.g., '/home/user/profiles' or 'C:\\profiles'
@@ -147,7 +160,16 @@ def selectprofile(username):
 
     # Set up Chrome options to use the new profile
     chrome_options = Options()
-    chrome_options.add_argument(f'user-data-dir={profile_path}')
+
+    # Define minimum size and generate random dimensions
+    min_width, min_height = 1200, 1200
+    random_width = random.randint(min_width, min_width + 200)
+    random_height = random.randint(min_height, min_height + 600)
+
+    # Set the window size
+    chrome_options.add_argument(f"--window-size={random_width},{random_height}")
+    chrome_options.add_argument("--headless")
+
     return chrome_options
 
 
@@ -161,3 +183,4 @@ if __name__ == "__main__":
     login()
     handle_modal()
     sell_on_pos()
+    driver.quit()
