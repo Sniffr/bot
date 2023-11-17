@@ -1,11 +1,11 @@
+import os
 import random
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
-
+from selenium.webdriver.firefox.options import Options as FirefoxOptions, Options
 
 
 def login():
@@ -126,20 +126,35 @@ def add_random_items_to_cart():
         print("Error adding items to cart:", e)
 
 
+def selectprofile():
+    # Define the base directory where you want to store profiles
+    base_profile_dir = '/profiles'  # Replace with the directory where you want to store profiles
+
+    # Define a unique name for the new profile
+    profile_name = username  # Replace with your desired profile name
+
+    # Complete path for the new profile
+    profile_path = os.path.join(base_profile_dir, profile_name)
+
+    # Check if the directory exists, and if not, create it
+    if not os.path.exists(profile_path):
+        os.makedirs(profile_path)
+
+    chrome_options = Options()
+    chrome_options.add_argument(f'user-data-dir={profile_path}')
+
+
 if __name__ == "__main__":
     # Replace with your own credentials and URL
     url = "https://jng-fnd2-zpqy7.ondigitalocean.app"
     username = "mbugua@jungopharm.com"
     password = "123456789"
-    options = FirefoxOptions()
-    # Set the headless option
-    options.add_argument("--headless")
-
     # Now initiate the driver with these options
-    driver = webdriver.Firefox(options=options)
+    driver = webdriver.Chrome()
     # Path to ChromeDriver
     driver.get(url)
     login()
     handle_modal()  # Call the function to handle the modal
     sell_on_pos()
 
+    driver.quit()
