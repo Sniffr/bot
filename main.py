@@ -140,7 +140,6 @@ def selectprofile():
     if not os.path.exists(profile_path):
         os.makedirs(profile_path)
 
-    chrome_options = Options()
     chrome_options.add_argument(f'user-data-dir={profile_path}')
 
 
@@ -150,11 +149,13 @@ if __name__ == "__main__":
     username = "mbugua@jungopharm.com"
     password = "123456789"
     # Now initiate the driver with these options
-    driver = webdriver.Chrome()
+    chrome_options = Options()
+    selectprofile()
+    driver = webdriver.Chrome(options=chrome_options)
+
     # Path to ChromeDriver
     driver.get(url)
     login()
     handle_modal()  # Call the function to handle the modal
     sell_on_pos()
 
-    driver.quit()
