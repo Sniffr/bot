@@ -920,3 +920,50 @@ console.warn: LoginRecipes: "Falling back to a synchronous message for: https://
 console.warn: LoginRecipes: "Falling back to a synchronous message for: https://jng-fnd2-zpqy7.ondigitalocean.app."
 JavaScript error: https://cdn.onesignal.com/sdks/OneSignalPageSDKES6.js?v=151604, line 1: f: OneSignal: This web push config can only be used on https://business.jungopharm.dev. Your current origin is https://jng-fnd2-zpqy7.ondigitalocean.app.
 1700214163919	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+JavaScript warning: https://jng-fnd2-zpqy7.ondigitalocean.app/_next/static/chunks/main-114739471fe4e9f9.js, line 1: Script terminated by timeout at:
+o@https://jng-fnd2-zpqy7.ondigitalocean.app/_next/static/chunks/main-114739471fe4e9f9.js:1:105128
+78018/H/<@https://jng-fnd2-zpqy7.ondigitalocean.app/_next/static/chunks/main-114739471fe4e9f9.js:1:105607
+n@https://jng-fnd2-zpqy7.ondigitalocean.app/_next/static/chunks/main-114739471fe4e9f9.js:1:101341
+
+1700218340940	Marionette	INFO	Stopped listening on port 58493
+Dynamically enable window occlusion 1
+1700219478880	geckodriver	INFO	Listening on 127.0.0.1:56944
+1700219481934	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--headless" "--remote-debugging-port" "569 ... " "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\archer\\AppData\\Local\\Temp\\rust_mozprofileYuoX3i"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1700219482439	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1700219482489	Marionette	INFO	Listening on port 56972
+WebDriver BiDi listening on ws://127.0.0.1:56945
+Read port: 56972
+1700219482642	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+DevTools listening on ws://127.0.0.1:56945/devtools/browser/b0724950-cc5b-45f7-a6f2-b721918b8b9e
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://jng-fnd2-zpqy7.ondigitalocean.app."
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://jng-fnd2-zpqy7.ondigitalocean.app."
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://jng-fnd2-zpqy7.ondigitalocean.app."
+JavaScript error: https://cdn.onesignal.com/sdks/OneSignalPageSDKES6.js?v=151604, line 1: f: OneSignal: This web push config can only be used on https://business.jungopharm.dev. Your current origin is https://jng-fnd2-zpqy7.ondigitalocean.app.
+1700219514193	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+JavaScript error: , line 0: NS_ERROR_NOT_AVAILABLE
+1:57370
+1700219580296	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--headless" "--remote-debugging-port" "573 ... " "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\archer\\AppData\\Local\\Temp\\rust_mozprofileW0f3uL"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1700219580512	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1700219580560	Marionette	INFO	Listening on port 57381
+WebDriver BiDi listening on ws://127.0.0.1:57371
+Read port: 57381
+1700219580684	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+DevTools listening on ws://127.0.0.1:57371/devtools/browser/ed357000-5cc0-4ab4-a5ff-1e68fe29f29a
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://jng-fnd2-zpqy7.ondigitalocean.app."
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://jng-fnd2-zpqy7.ondigitalocean.app."
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://jng-fnd2-zpqy7.ondigitalocean.app."
+JavaScript error: https://cdn.onesignal.com/sdks/OneSignalPageSDKES6.js?v=151604, line 1: f: OneSignal: This web push config can only be used on https://business.jungopharm.dev. Your current origin is https://jng-fnd2-zpqy7.ondigitalocean.app.
+1700219610580	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+JavaScript error: , line 0: NS_ERROR_NOT_AVAILABLE

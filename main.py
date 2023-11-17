@@ -4,6 +4,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+
 
 
 def login():
@@ -129,8 +131,12 @@ if __name__ == "__main__":
     url = "https://jng-fnd2-zpqy7.ondigitalocean.app"
     username = "mbugua@jungopharm.com"
     password = "123456789"
-    # Setup WebDriver
-    driver = webdriver.Firefox()
+    options = FirefoxOptions()
+    # Set the headless option
+    options.add_argument("--headless")
+
+    # Now initiate the driver with these options
+    driver = webdriver.Firefox(options=options)
     # Path to ChromeDriver
     driver.get(url)
     login()
