@@ -212,7 +212,7 @@ def run_driver(username, password):
     driver = webdriver.Chrome(options=chrome_option)
     print(f"Email: {username}, Password: {password}")
 
-    driver.get("https://jng-fnd2-zpqy7.ondigitalocean.app")
+    driver.get("https://business.jungopharm.com")
     login(driver, username, password)
 
     handle_modal(driver)
