@@ -58,7 +58,7 @@ def login(driver, username, password):
         human_like_click(login_button, driver)
 
     except Exception as e:
-        print("error logging in " + e)
+        print("error logging in " , e)
         login(driver, username, password)
 
 
@@ -303,7 +303,7 @@ def makeorder(driver):
     )
     select_belea_pharma(driver)
 
-    time.sleep(50)
+
     # add_random_items_to_cart(driver)
     # checkout(driver)
 
@@ -315,6 +315,6 @@ def run_scheduled_tasks():
 
 
 if __name__ == '__main__':
-    # schedule_drivers()
-    # run_scheduled_tasks()
-    run_order_driver('mbugua@jungopharm.com', '123456789')
+    schedule_drivers()
+    run_scheduled_tasks()
+    # run_order_driver('mbugua@jungopharm.com', '123456789')
