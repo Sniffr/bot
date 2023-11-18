@@ -58,7 +58,7 @@ def login(driver, username, password):
         human_like_click(login_button, driver)
 
     except Exception as e:
-        print("error logging in " , e)
+        print("error logging in ", e)
         login(driver, username, password)
 
 
@@ -238,11 +238,21 @@ def run_order_driver(username, password):
 
 
 def generate_random_times(num_actions, start_hour, end_hour):
+    # Calculate the total minutes in the time range
+    total_minutes = (end_hour - start_hour) * 60
+
     times = set()
     while len(times) < num_actions:
-        hour = random.randint(start_hour, end_hour - 1)
-        minute = random.randint(0, 59)
-        times.add(datetime.time(hour, minute).strftime('%H:%M'))
+        # Generate a random minute offset within the range
+        random_minute = random.randint(0, total_minutes - 1)
+
+        # Calculate the actual time
+        time = (datetime.datetime.combine(datetime.date.today(), datetime.time(hour=start_hour))
+                + datetime.timedelta(minutes=random_minute)).time()
+
+        # Format and add to the set
+        times.add(time.strftime('%H:%M'))
+
     return list(times)
 
 
@@ -261,7 +271,7 @@ def schedule_drivers():
 
     for user in users:
         # Generate random times for each user
-        times = generate_random_times(num_actions_per_user, 8, 16)
+        times = generate_random_times(num_actions_per_user, 16, 21)
 
         for time in times:
             # Create a unique identifier for the task
@@ -302,7 +312,6 @@ def makeorder(driver):
         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "button.MuiIconButton-root"))
     )
     select_belea_pharma(driver)
-
 
     # add_random_items_to_cart(driver)
     # checkout(driver)
