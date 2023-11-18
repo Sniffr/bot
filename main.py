@@ -59,7 +59,7 @@ def login(driver, username, password):
 
     except Exception as e:
         print("error logging in ", e)
-        login(driver, username, password)
+        driver.quit()
 
 
 def handle_modal(driver):
