@@ -58,7 +58,7 @@ def login(driver, username, password):
         human_like_click(login_button, driver)
 
     except Exception as e:
-        print("error logging in "+ e)
+        print("error logging in " + e)
         login(driver, username, password)
 
 
@@ -169,7 +169,6 @@ def add_random_items_to_cart(driver):
         print("Error adding items to cart:", e)
 
 
-
 def selectprofile(username):
     # Use an absolute path for the profile directory, e.g., '/home/user/profiles' or 'C:\\profiles'
     base_profile_dir = os.path.abspath('./profiles')
@@ -221,6 +220,23 @@ def run_driver(username, password):
     driver.quit()
 
 
+def run_order_driver(username, password):
+    print(f"Running driver for {username} at {datetime.datetime.now().strftime('%H:%M:%S')}")
+    global us
+    global passw
+    us = username
+    passw = password
+    chrome_option = selectprofile(username)
+    driver = webdriver.Chrome(options=chrome_option)
+    print(f"Email: {username}, Password: {password}")
+
+    driver.get("https://jng-fnd2-zpqy7.ondigitalocean.app")
+    login(driver, username, password)
+
+    handle_modal(driver)
+    makeorder(driver)
+
+
 def generate_random_times(num_actions, start_hour, end_hour):
     times = set()
     while len(times) < num_actions:
@@ -235,7 +251,7 @@ def schedule_drivers():
     email_list = df['email'].tolist()
     ca = certifi.where()
     connection_string = "mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0&authSource=admin&retryWrites=true&w=majority"
-    client = MongoClient(connection_string,tlsCAFile=ca)
+    client = MongoClient(connection_string, tlsCAFile=ca)
     db = client['JungoUsers']
     users_collection = db['users']
     schedules_collection = db['schedules']  # A new collection for schedules
@@ -263,6 +279,35 @@ def schedule_drivers():
             })
 
 
+def select_belea_pharma(driver):
+    try:
+        # Wait for the element to be present on the page
+        belea_pharma_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'BelEa Pharma')]"))
+        )
+        # Click the element
+        belea_pharma_element.click()
+        print("BelEa Pharma selected.")
+    except Exception as e:
+        print("Error selecting BelEa Pharma:", e)
+
+
+def makeorder(driver):
+    orders_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'Order Products')]"))
+    )
+    orders_button.click()
+    # Wait for the items to load (i.e., the 'Add' buttons to appear)
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, "button.MuiIconButton-root"))
+    )
+    select_belea_pharma(driver)
+
+    time.sleep(50)
+    # add_random_items_to_cart(driver)
+    # checkout(driver)
+
+
 def run_scheduled_tasks():
     while True:
         schedule.run_pending()
@@ -270,5 +315,6 @@ def run_scheduled_tasks():
 
 
 if __name__ == '__main__':
-    schedule_drivers()
-    run_scheduled_tasks()
+    # schedule_drivers()
+    # run_scheduled_tasks()
+    run_order_driver('mbugua@jungopharm.com', '123456789')
