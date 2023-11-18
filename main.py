@@ -1,8 +1,10 @@
+import csv
 import datetime
 import os
 import random
 from pymongo import MongoClient
 import schedule
+import pandas as pd
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -226,12 +228,14 @@ def generate_random_times(num_actions, start_hour, end_hour):
 
 
 def schedule_drivers():
+    df = pd.read_csv('jungo_users.csv')
+    email_list = df['email'].tolist()
     connection_string = "mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0&authSource=admin&retryWrites=true&w=majority"
     client = MongoClient(connection_string)
     db = client['JungoUsers']
     collection = db['users']
 
-    users = collection.find()
+    users = collection.find({"Emails": {"$in": email_list}})
     num_actions_per_user = random.randint(4, 20)
 
     for user in users:
