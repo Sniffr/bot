@@ -252,7 +252,7 @@ def schedule_drivers():
             task_id = ObjectId()
 
             # Schedule the driver to run at each specified time
-            schedule.every().day.at(time).do(run_driver, user['Emails'], '12345678', id=task_id)
+            schedule.every().day.at(time).do(run_driver, user['Emails'], '12345678')
             print(f"Scheduled for {user['Emails']} at {time}")
 
             # Save the schedule in MongoDB

@@ -15,9 +15,13 @@ df = pd.read_csv('jungo_business.csv', quoting=csv.QUOTE_ALL)
 client = MongoClient(connection_string)
 email_list = df['pharmacode'].tolist()
 
-files = collection.delete_many({"Registration_Number": {"$nin": email_list}})
-print(files.deleted_count, " documents deleted.")
+# # files = collection.delete_many({"Registration_Number": {"$nin": email_list}})
+# print(files.deleted_count, " documents deleted.")
 
+schedules = db['schedules']
+
+files = schedules.delete_many({})
+print(files.deleted_count, " documents deleted.")
 
 # def escape_string(value):
 #     """ Escape special characters in the string for SQL insertion """
