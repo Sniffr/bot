@@ -255,6 +255,5 @@ def run_scheduled_tasks():
 
 
 if __name__ == '__main__':
-    # schedule_drivers()
-    # run_scheduled_tasks()
-    run_driver("lilostitchhh6@gmail.com", "12345678")
+    schedule_drivers()
+    run_scheduled_tasks()
