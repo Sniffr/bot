@@ -240,7 +240,7 @@ def schedule_drivers():
     users_collection = db['users']
     schedules_collection = db['schedules']  # A new collection for schedules
 
-    users = users_collection.find({"Emails": {"$in": email_list}})
+    users = users_collection.find()
     num_actions_per_user = random.randint(4, 20)
 
     for user in users:

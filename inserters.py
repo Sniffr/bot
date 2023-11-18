@@ -10,13 +10,13 @@ db = client['JungoUsers']
 collection = db['users']
 
 users = collection.find()
-df = pd.read_csv('jungo_users.csv', quoting=csv.QUOTE_ALL)
+df = pd.read_csv('jungo_business.csv', quoting=csv.QUOTE_ALL)
 # Connect to MongoDB
 client = MongoClient(connection_string)
-email_list = df['email'].tolist()
+email_list = df['pharmacode'].tolist()
 
-files = collection.find({"Emails": {"$in": email_list}})
-
+files = collection.delete_many({"Registration_Number": {"$nin": email_list}})
+print(files.deleted_count, " documents deleted.")
 
 
 # def escape_string(value):
