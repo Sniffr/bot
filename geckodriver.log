@@ -947,8 +947,8 @@ console.warn: LoginRecipes: "Falling back to a synchronous message for: https://
 JavaScript error: https://cdn.onesignal.com/sdks/OneSignalPageSDKES6.js?v=151604, line 1: f: OneSignal: This web push config can only be used on https://business.jungopharm.dev. Your current origin is https://jng-fnd2-zpqy7.ondigitalocean.app.
 1700219514193	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
 JavaScript error: , line 0: NS_ERROR_NOT_AVAILABLE
-1:57370
-1700219580296	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--headless" "--remote-debugging-port" "573 ... " "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\archer\\AppData\\Local\\Temp\\rust_mozprofileW0f3uL"
+1700305914197	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+ort" "573 ... " "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\archer\\AppData\\Local\\Temp\\rust_mozprofileW0f3uL"
 *** You are running in headless mode.
 console.warn: services.settings: Ignoring preference override of remote settings server
 console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
@@ -967,3 +967,4 @@ console.warn: LoginRecipes: "Falling back to a synchronous message for: https://
 JavaScript error: https://cdn.onesignal.com/sdks/OneSignalPageSDKES6.js?v=151604, line 1: f: OneSignal: This web push config can only be used on https://business.jungopharm.dev. Your current origin is https://jng-fnd2-zpqy7.ondigitalocean.app.
 1700219610580	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
 JavaScript error: , line 0: NS_ERROR_NOT_AVAILABLE
+1700306011569	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
