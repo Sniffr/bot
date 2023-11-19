@@ -2,6 +2,7 @@ import csv
 import datetime
 import os
 import random
+from datetime import date
 
 import certifi
 from bson import ObjectId
@@ -169,6 +170,34 @@ def add_random_items_to_cart(driver):
         print("Error adding items to cart:", e)
 
 
+def select_belea_pharma(driver):
+    try:
+        # Wait for the element to be present on the page
+        belea_pharma_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'BelEa Pharma')]"))
+        )
+        # Click the element
+        belea_pharma_element.click()
+        print("BelEa Pharma selected.")
+    except Exception as e:
+        print("Error selecting BelEa Pharma:", e)
+
+
+def makeorder(driver):
+    orders_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'Order Products')]"))
+    )
+    orders_button.click()
+    # Wait for the items to load (i.e., the 'Add' buttons to appear)
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, "button.MuiIconButton-root"))
+    )
+    select_belea_pharma(driver)
+
+    # add_random_items_to_cart(driver)
+    # checkout(driver)
+
+
 def selectprofile(username):
     # Use an absolute path for the profile directory, e.g., '/home/user/profiles' or 'C:\\profiles'
     base_profile_dir = os.path.abspath('./profiles')
@@ -289,41 +318,56 @@ def schedule_drivers():
             })
 
 
-def select_belea_pharma(driver):
-    try:
-        # Wait for the element to be present on the page
-        belea_pharma_element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'BelEa Pharma')]"))
-        )
-        # Click the element
-        belea_pharma_element.click()
-        print("BelEa Pharma selected.")
-    except Exception as e:
-        print("Error selecting BelEa Pharma:", e)
+def get_todays_schedule(db):
+    today = date.today()
+    return list(db['schedules'].find({"date": today.strftime("%Y-%m-%d")}))
 
 
-def makeorder(driver):
-    orders_button = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'Order Products')]"))
-    )
-    orders_button.click()
-    # Wait for the items to load (i.e., the 'Add' buttons to appear)
-    WebDriverWait(driver, 10).until(
-        EC.presence_of_all_elements_located((By.CSS_SELECTOR, "button.MuiIconButton-root"))
-    )
-    select_belea_pharma(driver)
+def create_daily_schedule(users_collection, schedules_collection):
+    users = users_collection.find()
+    num_actions_per_user = random.randint(4, 20)
+    today = date.today()
 
-    # add_random_items_to_cart(driver)
-    # checkout(driver)
+    for user in users:
+        times = generate_random_times(num_actions_per_user, 16, 21)
+        for time in times:
+            task_id = ObjectId()
+            schedules_collection.insert_one({
+                '_id': task_id,
+                'email': user['email'],
+                'scheduled_time': time,
+                'date': today.strftime("%Y-%m-%d"),
+                'completed': False
+            })
+
+
+def schedule_tasks(db):
+    todays_schedule = get_todays_schedule(db)
+    if not todays_schedule:
+        create_daily_schedule(db['users'], db['schedules'])
+        todays_schedule = get_todays_schedule(db)
+
+    for task in todays_schedule:
+        if not task['completed']:
+            schedule.every().day.at(task['scheduled_time']).do(run_task, task['_id'], task['email'], '12345678')
+
+
+def run_task(task_id, username, password):
+    run_driver(username, password)
+    db['schedules'].update_one({'_id': task_id}, {'$set': {'completed': True}})
 
 
 def run_scheduled_tasks():
     while True:
         schedule.run_pending()
-        time.sleep(10)
+        time.sleep(5)
 
 
 if __name__ == '__main__':
-    schedule_drivers()
+    ca = certifi.where()
+    connection_string = "mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0&authSource=admin&retryWrites=true&w=majority"
+    client = MongoClient(connection_string, tlsCAFile=ca)
+    db = client['JungoUsers']
+
+    schedule_tasks(db)
     run_scheduled_tasks()
-    # run_order_driver('mbugua@jungopharm.com', '123456789')
