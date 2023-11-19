@@ -297,11 +297,11 @@ def create_daily_schedule(users_collection, schedules_collection):
     scheduled_times = {}  # Dictionary to track the number of tasks per time slot
 
     for user in users:
-        num_actions_per_user = random.randint(4, 20)
+        num_actions_per_user = random.randint(2, 10)
         scheduled_for_user = 0
 
         while scheduled_for_user < num_actions_per_user:
-            times = generate_random_times(num_actions_per_user - scheduled_for_user, 8, 21)
+            times = generate_random_times(num_actions_per_user - scheduled_for_user, 13, 21)
 
             for c_time in times:
                 if scheduled_times.get(c_time, 0) < 3:
