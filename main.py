@@ -275,46 +275,15 @@ def generate_random_times(num_actions, start_hour, end_hour):
         random_minute = random.randint(0, total_minutes - 1)
 
         # Calculate the actual time
-        time = (datetime.datetime.combine(datetime.date.today(), datetime.time(hour=start_hour))
+        time_comb = (datetime.datetime.combine(datetime.date.today(), datetime.time(hour=start_hour))
                 + datetime.timedelta(minutes=random_minute)).time()
 
         # Format and add to the set
-        times.add(time.strftime('%H:%M'))
+        times.add(time_comb.strftime('%H:%M'))
 
     return list(times)
 
 
-# def schedule_drivers():
-#     df = pd.read_csv('jungo_users.csv')
-#     email_list = df['email'].tolist()
-#     ca = certifi.where()
-#     connection_string = "mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0&authSource=admin&retryWrites=true&w=majority"
-#     client = MongoClient(connection_string, tlsCAFile=ca)
-#     db = client['JungoUsers']
-#     users_collection = db['users']
-#     schedules_collection = db['schedules']  # A new collection for schedules
-#
-#     users = users_collection.find()
-#     num_actions_per_user = random.randint(4, 20)
-#
-#     for user in users:
-#         # Generate random times for each user
-#         times = generate_random_times(num_actions_per_user, 16, 21)
-#
-#         for time in times:
-#             # Create a unique identifier for the task
-#             task_id = ObjectId()
-#
-#             # Schedule the driver to run at each specified time
-#             schedule.every().day.at(time).do(run_driver, user['Emails'], '12345678')
-#             print(f"Scheduled for {user['Emails']} at {time}")
-#
-#             # Save the schedule in MongoDB
-#             schedules_collection.insert_one({
-#                 '_id': task_id,
-#                 'email': user['Emails'],
-#                 'scheduled_time': time
-#             })
 
 
 def get_todays_schedule(db):
@@ -324,22 +293,29 @@ def get_todays_schedule(db):
 
 def create_daily_schedule(users_collection, schedules_collection):
     users = users_collection.find()
-
     today = date.today()
+    scheduled_times = {}  # Dictionary to track the number of tasks per time slot
 
     for user in users:
         num_actions_per_user = random.randint(4, 20)
-        times = generate_random_times(num_actions_per_user, 8, 21)
-        print("schedule for ", user['email'])
-        for time in times:
-            task_id = ObjectId()
-            schedules_collection.insert_one({
-                '_id': task_id,
-                'email': user['email'],
-                'scheduled_time': time,
-                'date': today.strftime("%Y-%m-%d"),
-                'completed': False
-            })
+        scheduled_for_user = 0
+
+        while scheduled_for_user < num_actions_per_user:
+            times = generate_random_times(num_actions_per_user - scheduled_for_user, 8, 21)
+
+            for c_time in times:
+                if scheduled_times.get(c_time, 0) < 3:
+                    task_id = ObjectId()
+                    schedules_collection.insert_one({
+                        '_id': task_id,
+                        'email': user['email'],
+                        'scheduled_time': c_time,
+                        'date': today.strftime("%Y-%m-%d"),
+                        'completed': False
+                    })
+                    scheduled_times[c_time] = scheduled_times.get(c_time, 0) + 1
+                    scheduled_for_user += 1
+
 
 
 def schedule_tasks(db):
