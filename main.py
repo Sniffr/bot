@@ -78,8 +78,7 @@ def handle_modal(driver):
 
     except Exception as e:
         print("No modal found or other error:", e)
-        login(driver, us, passw)
-        handle_modal(driver)
+        driver.quit()
 
 
 def sell_on_pos(driver):
