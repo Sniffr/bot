@@ -351,6 +351,7 @@ def schedule_tasks(db):
 
     for task in todays_schedule:
         if not task['completed']:
+            print("scheduling for ", task['email'], task['scheduled_time'])
             schedule.every().day.at(task['scheduled_time']).do(run_task, task['_id'], task['email'], '12345678')
 
 
