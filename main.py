@@ -285,37 +285,37 @@ def generate_random_times(num_actions, start_hour, end_hour):
     return list(times)
 
 
-def schedule_drivers():
-    df = pd.read_csv('jungo_users.csv')
-    email_list = df['email'].tolist()
-    ca = certifi.where()
-    connection_string = "mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0&authSource=admin&retryWrites=true&w=majority"
-    client = MongoClient(connection_string, tlsCAFile=ca)
-    db = client['JungoUsers']
-    users_collection = db['users']
-    schedules_collection = db['schedules']  # A new collection for schedules
-
-    users = users_collection.find()
-    num_actions_per_user = random.randint(4, 20)
-
-    for user in users:
-        # Generate random times for each user
-        times = generate_random_times(num_actions_per_user, 16, 21)
-
-        for time in times:
-            # Create a unique identifier for the task
-            task_id = ObjectId()
-
-            # Schedule the driver to run at each specified time
-            schedule.every().day.at(time).do(run_driver, user['Emails'], '12345678')
-            print(f"Scheduled for {user['Emails']} at {time}")
-
-            # Save the schedule in MongoDB
-            schedules_collection.insert_one({
-                '_id': task_id,
-                'email': user['Emails'],
-                'scheduled_time': time
-            })
+# def schedule_drivers():
+#     df = pd.read_csv('jungo_users.csv')
+#     email_list = df['email'].tolist()
+#     ca = certifi.where()
+#     connection_string = "mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0&authSource=admin&retryWrites=true&w=majority"
+#     client = MongoClient(connection_string, tlsCAFile=ca)
+#     db = client['JungoUsers']
+#     users_collection = db['users']
+#     schedules_collection = db['schedules']  # A new collection for schedules
+#
+#     users = users_collection.find()
+#     num_actions_per_user = random.randint(4, 20)
+#
+#     for user in users:
+#         # Generate random times for each user
+#         times = generate_random_times(num_actions_per_user, 16, 21)
+#
+#         for time in times:
+#             # Create a unique identifier for the task
+#             task_id = ObjectId()
+#
+#             # Schedule the driver to run at each specified time
+#             schedule.every().day.at(time).do(run_driver, user['Emails'], '12345678')
+#             print(f"Scheduled for {user['Emails']} at {time}")
+#
+#             # Save the schedule in MongoDB
+#             schedules_collection.insert_one({
+#                 '_id': task_id,
+#                 'email': user['Emails'],
+#                 'scheduled_time': time
+#             })
 
 
 def get_todays_schedule(db):
@@ -325,11 +325,13 @@ def get_todays_schedule(db):
 
 def create_daily_schedule(users_collection, schedules_collection):
     users = users_collection.find()
-    num_actions_per_user = random.randint(4, 20)
+
     today = date.today()
 
     for user in users:
-        times = generate_random_times(num_actions_per_user, 16, 21)
+        num_actions_per_user = random.randint(4, 20)
+        times = generate_random_times(num_actions_per_user, 8, 21)
+        print("schedule for ", user['email'])
         for time in times:
             task_id = ObjectId()
             schedules_collection.insert_one({
