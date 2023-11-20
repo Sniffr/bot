@@ -183,25 +183,25 @@ def select_belea_pharma(driver):
 
 
 def add_order_items_to_cart(driver):
-    try:
-        #     get all  add buttons
-        add_button_icon = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located(
-                (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
-            )
+    #     get all  add buttons
+    add_button_icon = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located(
+            (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
         )
-        #  choose random number of items to add
-        num_items_to_add = random.randint(2, 12)
+    )
+    number_to_add = random.randint(2, 8)
+    # Get the parent button elements of the selected SVGs
+    buttons = random.sample(add_button_icon, number_to_add)
 
-        selected_buttons = random.sample(add_button_icon, num_items_to_add)
-        button = selected_buttons[0]
-
-        # get button position
+    for button in buttons:
+        time.sleep(2)
+        # # get button position
         x = button.location['x']
         y = button.location['y']
         # scroll to button position
-        driver.execute_script("window.scrollTo({}, {});".format(x, y))
-        # Scroll the button into view and click
+        driver.execute_script("window.scrollTo({}, {});".format(x, y-100))
+
+        # # Scroll the button into view and click
         ActionChains(driver).move_to_element(button).click().perform()
         # Find the Quantity input box and clear it
         quantity_input = WebDriverWait(driver, 10).until(
@@ -216,8 +216,6 @@ def add_order_items_to_cart(driver):
         )
 
         add_to_cart_button.click()
-    except Exception as e:
-        print("Error adding items to cart:", e)
 
 
 def makeorder(driver):
