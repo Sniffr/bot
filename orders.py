@@ -342,28 +342,11 @@ def selectprofile(username):
     return chrome_options
 
 
-def run_driver(username, password):
-    print(f"Running driver for {username} at {datetime.datetime.now().strftime('%H:%M:%S')}")
-    global us
-    global passw
-    us = username
-    passw = password
-    chrome_option = selectprofile(username)
-    driver = webdriver.Chrome(options=chrome_option)
-    print(f"Email: {username}, Password: {password}")
 
-    driver.get("https://business.jungopharm.com")
-    login(driver, username, password)
-
-    handle_modal(driver)
-    sell_on_pos(driver)
-    driver.quit()
 
 
 def run_order_driver(username, password):
     print(f"Running driver for {username} at {datetime.datetime.now().strftime('%H:%M:%S')}")
-    global us
-    global passw
     us = username
     passw = password
     # chrome_option = selectprofile(username)
@@ -377,76 +360,17 @@ def run_order_driver(username, password):
     makeorder(driver)
 
 
-def generate_random_times(num_actions, start_hour, end_hour):
-    # Calculate the total minutes in the time range
-    total_minutes = (end_hour - start_hour) * 60
-    times = set()
-    while len(times) < num_actions:
-        # Generate a random minute offset within the range
-        random_minute = random.randint(0, total_minutes - 1)
-
-        # Calculate the actual time
-        time_comb = (datetime.datetime.combine(datetime.date.today(), datetime.time(hour=start_hour))
-                     + datetime.timedelta(minutes=random_minute)).time()
-
-        # Format and add to the set
-        times.add(time_comb.strftime('%H:%M'))
-
-    return list(times)
 
 
-def get_todays_schedule(db):
-    today = date.today()
-    return list(db['schedules'].find({"date": today.strftime("%Y-%m-%d")}))
 
 
-def create_daily_schedule(users_collection, schedules_collection):
-    users = users_collection.find()
-    today = date.today()
-    scheduled_times = {}  # Dictionary to track the number of tasks per time slot
-
-    for user in users:
-        num_actions_per_user = random.randint(2, 10)
-        scheduled_for_user = 0
-
-        while scheduled_for_user < num_actions_per_user:
-            times = generate_random_times(num_actions_per_user - scheduled_for_user, 13, 21)
-
-            for c_time in times:
-                if scheduled_times.get(c_time, 0) < 3:
-                    task_id = ObjectId()
-                    schedules_collection.insert_one({
-                        '_id': task_id,
-                        'email': user['email'],
-                        'scheduled_time': c_time,
-                        'date': today.strftime("%Y-%m-%d"),
-                        'completed': False
-                    })
-                    scheduled_times[c_time] = scheduled_times.get(c_time, 0) + 1
-                    scheduled_for_user += 1
 
 
-def schedule_tasks(db):
-    todays_schedule = get_todays_schedule(db)
-    if not todays_schedule:
-        create_daily_schedule(db['users'], db['schedules'])
-        todays_schedule = get_todays_schedule(db)
-
-    for task in todays_schedule:
-        if not task['completed']:
-            print("scheduling for ", task['email'], task['scheduled_time'])
-            schedule.every().day.at(task['scheduled_time']).do(run_task, task['_id'], task['email'], '12345678')
 
 
-def run_task(task_id, username, password):
-    run_driver(username, password)
-    db['schedules'].update_one({'_id': task_id}, {'$set': {'completed': True}})
 
 
-def run_scheduled_tasks():
-    while True:
-        schedule.run_pending()
-        time.sleep(5)
+
 
 
 if __name__ == '__main__':
@@ -457,7 +381,4 @@ if __name__ == '__main__':
                          "&authSource=admin&retryWrites=true&w=majority")
     client = MongoClient(connection_string, tlsCAFile=ca)
     db = client['JungoUsers']
-
-    schedule_tasks(db)
-    run_scheduled_tasks()
     run_order_driver("mbugua@jungopharm.com", "123456789")
