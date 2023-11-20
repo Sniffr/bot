@@ -172,7 +172,7 @@ def add_random_items_to_cart(driver):
 def select_belea_pharma(driver):
     try:
         # Wait for the element to be present on the page
-        belea_pharma_element = WebDriverWait(driver, 10).until(
+        belea_pharma_element = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'BelEa Pharma')]"))
         )
         # Click the element
@@ -180,6 +180,44 @@ def select_belea_pharma(driver):
         print("BelEa Pharma selected.")
     except Exception as e:
         print("Error selecting BelEa Pharma:", e)
+
+
+def add_order_items_to_cart(driver):
+    try:
+        #     get all  add buttons
+        add_button_icon = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located(
+                (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
+            )
+        )
+        #  choose random number of items to add
+        num_items_to_add = random.randint(2, 12)
+
+        selected_buttons = random.sample(add_button_icon, num_items_to_add)
+        button = selected_buttons[0]
+
+        # get button position
+        x = button.location['x']
+        y = button.location['y']
+        # scroll to button position
+        driver.execute_script("window.scrollTo({}, {});".format(x, y))
+        # Scroll the button into view and click
+        ActionChains(driver).move_to_element(button).click().perform()
+        # Find the Quantity input box and clear it
+        quantity_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "quantity"))
+        )
+        quantity_input.clear()
+        # Set the desired quantity
+        quantity_input.send_keys(str(20))
+        # Find and click the Add To Cart button
+        add_to_cart_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Add To Cart')]"))
+        )
+
+        add_to_cart_button.click()
+    except Exception as e:
+        print("Error adding items to cart:", e)
 
 
 def makeorder(driver):
@@ -193,7 +231,8 @@ def makeorder(driver):
     )
     select_belea_pharma(driver)
 
-    # add_random_items_to_cart(driver)
+    add_order_items_to_cart(driver)
+
     # checkout(driver)
 
 
@@ -254,11 +293,11 @@ def run_order_driver(username, password):
     global passw
     us = username
     passw = password
-    chrome_option = selectprofile(username)
-    driver = webdriver.Chrome(options=chrome_option)
+    # chrome_option = selectprofile(username)
+    driver = webdriver.Firefox()
     print(f"Email: {username}, Password: {password}")
 
-    driver.get("https://business.jungopharm.com")
+    driver.get("https://jng-fnd2-zpqy7.ondigitalocean.app")
     login(driver, username, password)
 
     handle_modal(driver)
@@ -268,7 +307,6 @@ def run_order_driver(username, password):
 def generate_random_times(num_actions, start_hour, end_hour):
     # Calculate the total minutes in the time range
     total_minutes = (end_hour - start_hour) * 60
-
     times = set()
     while len(times) < num_actions:
         # Generate a random minute offset within the range
@@ -276,14 +314,12 @@ def generate_random_times(num_actions, start_hour, end_hour):
 
         # Calculate the actual time
         time_comb = (datetime.datetime.combine(datetime.date.today(), datetime.time(hour=start_hour))
-                + datetime.timedelta(minutes=random_minute)).time()
+                     + datetime.timedelta(minutes=random_minute)).time()
 
         # Format and add to the set
         times.add(time_comb.strftime('%H:%M'))
 
     return list(times)
-
-
 
 
 def get_todays_schedule(db):
@@ -317,7 +353,6 @@ def create_daily_schedule(users_collection, schedules_collection):
                     scheduled_for_user += 1
 
 
-
 def schedule_tasks(db):
     todays_schedule = get_todays_schedule(db)
     if not todays_schedule:
@@ -342,10 +377,14 @@ def run_scheduled_tasks():
 
 
 if __name__ == '__main__':
-    ca = certifi.where()
-    connection_string = "mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0&authSource=admin&retryWrites=true&w=majority"
-    client = MongoClient(connection_string, tlsCAFile=ca)
-    db = client['JungoUsers']
-
-    schedule_tasks(db)
-    run_scheduled_tasks()
+    # ca = certifi.where()
+    # connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
+    #                      "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
+    #                      "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
+    #                      "&authSource=admin&retryWrites=true&w=majority")
+    # client = MongoClient(connection_string, tlsCAFile=ca)
+    # db = client['JungoUsers']
+    #
+    # schedule_tasks(db)
+    # run_scheduled_tasks()
+    run_order_driver("mbugua@jungopharm.com", "123456789")
