@@ -199,7 +199,7 @@ def add_order_items_to_cart(driver):
         x = button.location['x']
         y = button.location['y']
         # scroll to button position
-        driver.execute_script("window.scrollTo({}, {});".format(x, y-100))
+        driver.execute_script("window.scrollTo({}, {});".format(x, y - 100))
 
         # # Scroll the button into view and click
         ActionChains(driver).move_to_element(button).click().perform()
@@ -209,13 +209,88 @@ def add_order_items_to_cart(driver):
         )
         quantity_input.clear()
         # Set the desired quantity
-        quantity_input.send_keys(str(20))
+        quantity_input.send_keys(random.randint(6, 24))
         # Find and click the Add To Cart button
         add_to_cart_button = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Add To Cart')]"))
         )
 
         add_to_cart_button.click()
+
+
+def checkout_order(driver):
+    try:
+        checkout_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Checkout')]"))
+        )
+        x = checkout_button.location['x']
+        y = checkout_button.location['y']
+        # scroll to button position
+        driver.execute_script("window.scrollTo({}, {});".format(x, y - 100))
+        checkout_button.click()
+        # Select the 'CASH' payment method using JavaScript click
+        cash_option = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'M-Pesa on delivery')]"))
+        )
+        driver.execute_script("arguments[0].click();", cash_option)
+
+        # set the delivery date to tommorow
+        delivery_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//label[contains(text(), 'Delivery date')]/following-sibling::div//input"))
+        )
+
+        # set the delivery date to tommorow in format MM/DD/YYYY
+        delivery_input.click()
+
+        pen_icon = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//*[@data-testid='PenIcon']"))
+        )
+
+        # Click the pen icon
+        pen_icon.click()
+
+        dialog = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, "div.MuiDialog-paper"))
+        )
+
+        # Within the dialog, find the input field associated with the 'Delivery date' label
+        # Adjust the selector if needed based on the specific structure of your HTML
+        date_input = dialog.find_element(By.XPATH,
+                                         ".//label[contains(text(), 'Delivery date')]/following-sibling::div//input")
+
+        # Check if the input field is read-only
+        if not date_input.get_attribute('readonly'):
+            date_input.clear()  # Clear the field before sending keys
+            date_input.send_keys((datetime.date.today() + datetime.timedelta(days=1)).strftime("%m/%d/%Y"))
+        else:
+            print("The input field is read-only.")
+            # Handle read-only case here, possibly by interacting with other UI elements
+        ok_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'OK')]"))
+        )
+        ok_button.click()
+
+        morning_option = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "MORNING"))
+        )
+        afternoon_option = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "MID_MORNING"))
+        )
+        midday_option = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "AFTERNOON"))
+        )
+        option = random.choice([morning_option, afternoon_option, midday_option])
+        option.click()
+
+        # Confirm the selection
+        confirm_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Place Order')]"))
+        )
+        confirm_button.click()
+
+    except Exception as e:
+        print("Error during checkout:", e)
 
 
 def makeorder(driver):
@@ -231,7 +306,7 @@ def makeorder(driver):
 
     add_order_items_to_cart(driver)
 
-    # checkout(driver)
+    checkout_order(driver)
 
 
 def selectprofile(username):
