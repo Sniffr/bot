@@ -219,10 +219,10 @@ def run_order_driver(username, password):
 
 def schedule_orders(users_list):
     print(f"Scheduling orders for {len(users_list)} users...")
-    accounts_once = random.sample(list(users_list), 9)
+    accounts_once = random.sample(list(users_list), 8)
     for account in accounts_once:
         users_list.remove(account)
-    accounts_twice = random.sample(list(users_list), 2)
+    accounts_twice = random.sample(list(users_list), 4)
     accounts = [{"username": account['email'], "password": "12345678", "order_twice": False} for account in
                 accounts_once]
     accounts.extend(
@@ -241,7 +241,7 @@ def schedule_orders(users_list):
 
 
 def random_time_within_business_hours():
-    hour = random.randint(19, 20)
+    hour = random.randint(11, 14)
     minute = random.randint(1, 59)
     return datetime.now().replace(hour=hour, minute=minute, second=0, microsecond=0)
 
