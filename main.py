@@ -460,4 +460,3 @@ if __name__ == '__main__':
 
     schedule_tasks(db)
     run_scheduled_tasks()
-    run_order_driver("mbugua@jungopharm.com", "123456789")

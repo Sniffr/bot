@@ -69,14 +69,13 @@ def handle_modal(driver):
 
     except Exception as e:
         print("No modal found or other error: ", e)
-        driver.quit()
 
 
 def select_belea_pharma(driver):
     try:
         print("Attempting to select BelEa Pharma...")
         belea_pharma_element = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'BelEa Pharma')]"))
+            EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'Belea Pharmaceuticals Limited')]"))
         )
         belea_pharma_element.click()
         print("BelEa Pharma selected.")
@@ -85,34 +84,30 @@ def select_belea_pharma(driver):
 
 
 def add_order_items_to_cart(driver):
-    try:
-        print("Adding order items to cart...")
-        add_button_icon = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located(
-                (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
-            )
+    print("Adding order items to cart...")
+    add_button_icon = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located(
+            (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
         )
-        number_to_add = random.randint(2, 8)
-        buttons = random.sample(add_button_icon, number_to_add)
+    )
+    number_to_add = random.randint(2, 8)
+    buttons = random.sample(add_button_icon, number_to_add)
 
-        for button in buttons:
-            time.sleep(2)
-            x = button.location['x']
-            y = button.location['y']
-            driver.execute_script("window.scrollTo({}, {});".format(x, y - 100))
-            ActionChains(driver).move_to_element(button).click().perform()
-            quantity_input = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.ID, "quantity"))
-            )
-            quantity_input.clear()
-            quantity_input.send_keys(random.randint(6, 24))
-            add_to_cart_button = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Add To Cart')]"))
-            )
-            add_to_cart_button.click()
-
-    except Exception as e:
-        print("Error adding items to cart: ", e)
+    for button in buttons:
+        time.sleep(2)
+        x = button.location['x']
+        y = button.location['y']
+        driver.execute_script("window.scrollTo({}, {});".format(x, y - 100))
+        ActionChains(driver).move_to_element(button).click().perform()
+        quantity_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "quantity"))
+        )
+        quantity_input.clear()
+        quantity_input.send_keys(random.randint(6, 24))
+        add_to_cart_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Add To Cart')]"))
+        )
+        add_to_cart_button.click()
 
 
 def checkout_order(driver):
@@ -148,6 +143,8 @@ def checkout_order(driver):
         if not date_input.get_attribute('readonly'):
             date_input.clear()
             date_input.send_keys((date_time.date.today() + date_time.timedelta(days=1)).strftime("%m/%d/%Y"))
+
+
         else:
             print("The input field is read-only.")
         ok_button = WebDriverWait(driver, 10).until(
@@ -208,20 +205,24 @@ def selectprofile(username):
 
 def run_order_driver(username, password):
     print(f"Running order driver for {username} at {date_time.datetime.now().strftime('%H:%M:%S')}")
+    chrome_option = selectprofile(username)
     driver = webdriver.Firefox()
+    driver.maximize_window()
     print(f"Email: {username}, Password: {password}")
-    driver.get("https://jng-fnd2-zpqy7.ondigitalocean.app")
+    driver.get("https://business.jungopharm.com/")
     login(driver, username, password)
     handle_modal(driver)
     makeorder(driver)
+    time.sleep(30)
+    driver.quit()
 
 
 def schedule_orders(users_list):
     print(f"Scheduling orders for {len(users_list)} users...")
-    accounts_once = random.sample(list(users_list), 8)
+    accounts_once = random.sample(list(users_list), 9)
     for account in accounts_once:
         users_list.remove(account)
-    accounts_twice = random.sample(list(users_list), 4)
+    accounts_twice = random.sample(list(users_list), 2)
     accounts = [{"username": account['email'], "password": "12345678", "order_twice": False} for account in
                 accounts_once]
     accounts.extend(
@@ -240,8 +241,8 @@ def schedule_orders(users_list):
 
 
 def random_time_within_business_hours():
-    hour = random.randint(8, 14)
-    minute = random.randint(0, 59)
+    hour = random.randint(19, 20)
+    minute = random.randint(1, 59)
     return datetime.now().replace(hour=hour, minute=minute, second=0, microsecond=0)
 
 
@@ -284,3 +285,4 @@ if __name__ == '__main__':
 
     schedule_orders(list(users))
     run_scheduled_tasks()
+
