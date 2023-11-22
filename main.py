@@ -39,21 +39,21 @@ def human_like_click(element, driver):
 def login(driver, username, password):
     try:
         # Wait for the email field
-        email_field = WebDriverWait(driver, 10).until(
+        email_field = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.ID, "email"))
         )
         type_like_human(email_field, username)
         random_delay(1, 2)
 
         # Wait for the password field
-        password_field = WebDriverWait(driver, 10).until(
+        password_field = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.ID, "password"))
         )
         type_like_human(password_field, password)
         random_delay(1, 2)
 
         # Click login button
-        login_button = WebDriverWait(driver, 10).until(
+        login_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Login')]"))
         )
         human_like_click(login_button, driver)
@@ -66,13 +66,13 @@ def login(driver, username, password):
 def handle_modal(driver):
     try:
         # Wait for the modal to appear
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, ".MuiBox-root"))
         )
         random_delay(1, 2)
 
         # Locate and click the Dismiss button
-        dismiss_button = WebDriverWait(driver, 10).until(
+        dismiss_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Dismiss')]")))
         human_like_click(dismiss_button, driver)
 
@@ -83,12 +83,12 @@ def handle_modal(driver):
 
 def sell_on_pos(driver):
     try:
-        pos_button = WebDriverWait(driver, 10).until(
+        pos_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'Point Of Sale')]"))
         )
         pos_button.click()
         # Wait for the items to load (i.e., the 'Add' buttons to appear)
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 30).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, "button.MuiIconButton-root"))
         )
         add_random_items_to_cart(driver)
@@ -97,7 +97,7 @@ def sell_on_pos(driver):
         print("Initial POS action failed:", e)
         try:
             # Attempt to click on the menu icon
-            menu_icon = WebDriverWait(driver, 10).until(
+            menu_icon = WebDriverWait(driver, 30).until(
                 EC.element_to_be_clickable((By.XPATH, "/html/body/div[1]/header/div/button[1]"))
             )
             human_like_click(menu_icon, driver)
@@ -111,24 +111,24 @@ def sell_on_pos(driver):
 def checkout(driver):
     try:
         # Wait for the checkout button to appear and click it
-        checkout_button = WebDriverWait(driver, 10).until(
+        checkout_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Continue to Payment')]"))
         )
         checkout_button.click()
 
         # Select the 'CASH' payment method using JavaScript click
-        cash_option = WebDriverWait(driver, 10).until(
+        cash_option = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'CASH')]"))
         )
         driver.execute_script("arguments[0].click();", cash_option)
 
         # Confirm the selection
-        confirm_button = WebDriverWait(driver, 10).until(
+        confirm_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Confirm')]"))
         )
         confirm_button.click()
         # Wait for the modal to update and close button to appear
-        close_button = WebDriverWait(driver, 10).until(
+        close_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "/html/body/div[5]/div[3]/div[1]/div[2]/button"))
             # Adjust the selector
         )
@@ -141,7 +141,7 @@ def checkout(driver):
 def add_random_items_to_cart(driver):
     try:
         # Find all SVGs
-        svg_elements = WebDriverWait(driver, 10).until(
+        svg_elements = WebDriverWait(driver, 30).until(
             EC.presence_of_all_elements_located(
                 (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
             )
@@ -184,7 +184,7 @@ def select_belea_pharma(driver):
 
 def add_order_items_to_cart(driver):
     #     get all  add buttons
-    add_button_icon = WebDriverWait(driver, 10).until(
+    add_button_icon = WebDriverWait(driver, 30).until(
         EC.presence_of_all_elements_located(
             (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
         )
@@ -204,14 +204,14 @@ def add_order_items_to_cart(driver):
         # # Scroll the button into view and click
         ActionChains(driver).move_to_element(button).click().perform()
         # Find the Quantity input box and clear it
-        quantity_input = WebDriverWait(driver, 10).until(
+        quantity_input = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.ID, "quantity"))
         )
         quantity_input.clear()
         # Set the desired quantity
         quantity_input.send_keys(random.randint(6, 24))
         # Find and click the Add To Cart button
-        add_to_cart_button = WebDriverWait(driver, 10).until(
+        add_to_cart_button = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Add To Cart')]"))
         )
 
@@ -220,7 +220,7 @@ def add_order_items_to_cart(driver):
 
 def checkout_order(driver):
     try:
-        checkout_button = WebDriverWait(driver, 10).until(
+        checkout_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Checkout')]"))
         )
         x = checkout_button.location['x']
@@ -229,13 +229,13 @@ def checkout_order(driver):
         driver.execute_script("window.scrollTo({}, {});".format(x, y - 100))
         checkout_button.click()
         # Select the 'CASH' payment method using JavaScript click
-        cash_option = WebDriverWait(driver, 10).until(
+        cash_option = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'M-Pesa on delivery')]"))
         )
         driver.execute_script("arguments[0].click();", cash_option)
 
         # set the delivery date to tommorow
-        delivery_input = WebDriverWait(driver, 10).until(
+        delivery_input = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located(
                 (By.XPATH, "//label[contains(text(), 'Delivery date')]/following-sibling::div//input"))
         )
@@ -243,14 +243,14 @@ def checkout_order(driver):
         # set the delivery date to tommorow in format MM/DD/YYYY
         delivery_input.click()
 
-        pen_icon = WebDriverWait(driver, 10).until(
+        pen_icon = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//*[@data-testid='PenIcon']"))
         )
 
         # Click the pen icon
         pen_icon.click()
 
-        dialog = WebDriverWait(driver, 10).until(
+        dialog = WebDriverWait(driver, 30).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, "div.MuiDialog-paper"))
         )
 
@@ -266,25 +266,25 @@ def checkout_order(driver):
         else:
             print("The input field is read-only.")
             # Handle read-only case here, possibly by interacting with other UI elements
-        ok_button = WebDriverWait(driver, 10).until(
+        ok_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'OK')]"))
         )
         ok_button.click()
 
-        morning_option = WebDriverWait(driver, 10).until(
+        morning_option = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.ID, "MORNING"))
         )
-        afternoon_option = WebDriverWait(driver, 10).until(
+        afternoon_option = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.ID, "MID_MORNING"))
         )
-        midday_option = WebDriverWait(driver, 10).until(
+        midday_option = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.ID, "AFTERNOON"))
         )
         option = random.choice([morning_option, afternoon_option, midday_option])
         option.click()
 
         # Confirm the selection
-        confirm_button = WebDriverWait(driver, 10).until(
+        confirm_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Place Order')]"))
         )
         confirm_button.click()
@@ -294,12 +294,12 @@ def checkout_order(driver):
 
 
 def makeorder(driver):
-    orders_button = WebDriverWait(driver, 10).until(
+    orders_button = WebDriverWait(driver, 30).until(
         EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'Order Products')]"))
     )
     orders_button.click()
     # Wait for the items to load (i.e., the 'Add' buttons to appear)
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "button.MuiIconButton-root"))
     )
     select_belea_pharma(driver)
