@@ -259,12 +259,23 @@ def schedule_task(task):
 
 
 def schedule_all_tasks():
-    tasks = orders_collection.find({"completed": False})
+    tasks = orders_collection.find({"completed": False, "date": datetime.now().strftime("%Y-%m-%d")})
     for task in tasks:
         schedule_task(task)
 
 
+def is_schedule_made_for_today():
+    """
+    Check if a schedule is already made for today.
+    """
+    today = datetime.now().strftime("%Y-%m-%d")
+    return orders_collection.count_documents({"date": today}) > 0
+
+
 def run_scheduled_tasks():
+    if not is_schedule_made_for_today():
+        schedule_orders(list(users))
+
     schedule_all_tasks()
     while True:
         schedule.run_pending()
@@ -282,7 +293,4 @@ if __name__ == '__main__':
     orders_collection = db['orders']
     users_collection = db['users']
     users = users_collection.find({})
-
-    schedule_orders(list(users))
     run_scheduled_tasks()
-
