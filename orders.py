@@ -247,7 +247,7 @@ def schedule_orders(users_list):
 
 
 def random_time_within_business_hours():
-    hour = random.randint(12, 18)
+    hour = random.randint(9, 18)
     minute = random.randint(1, 59)
     return datetime.now().replace(hour=hour, minute=minute, second=0, microsecond=0)
 
