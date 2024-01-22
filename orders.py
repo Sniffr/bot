@@ -204,17 +204,23 @@ def selectprofile(username):
 
 
 def run_order_driver(username, password):
-    print(f"Running order driver for {username} at {date_time.datetime.now().strftime('%H:%M:%S')}")
-    chrome_option = selectprofile(username)
     driver = webdriver.Firefox()
     driver.maximize_window()
-    print(f"Email: {username}, Password: {password}")
-    driver.get("https://business.jungopharm.com/")
-    login(driver, username, password)
-    handle_modal(driver)
-    makeorder(driver)
-    time.sleep(30)
-    driver.quit()
+    try:
+        print(f"Running order driver for {username} at {date_time.datetime.now().strftime('%H:%M:%S')}")
+        chrome_option = selectprofile(username)
+
+        print(f"Email: {username}, Password: {password}")
+        driver.get("https://business.jungopharm.com/")
+        login(driver, username, password)
+        handle_modal(driver)
+        makeorder(driver)
+        time.sleep(30)
+    except Exception as e:
+        print(f"Error running order driver for {username}: {e}")
+        driver.quit()
+    finally:
+        driver.quit()
 
 
 def schedule_orders(users_list):
@@ -247,9 +253,12 @@ def random_time_within_business_hours():
 
 
 def run_task(task):
-    print(f"Executing task for {task['username']} at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    run_order_driver(task['username'], task['password'])
-    orders_collection.update_one({"_id": task['_id']}, {"$set": {"completed": True}})
+    try:
+        print(f"Executing task for {task['username']} at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        run_order_driver(task['username'], task['password'])
+        orders_collection.update_one({"_id": task['_id']}, {"$set": {"completed": True}})
+    except Exception as e:
+        print(f"Error executing task for {task['username']}: {e}")
 
 
 def schedule_task(task):
