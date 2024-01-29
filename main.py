@@ -2,6 +2,7 @@ import csv
 import datetime
 import os
 import random
+import threading
 from datetime import date
 
 import certifi
@@ -301,5 +302,12 @@ if __name__ == '__main__':
     client = MongoClient(connection_string, tlsCAFile=ca)
     db = client['JungoUsers']
 
-    schedule_tasks(db)
+    # Start scheduling tasks in a separate thread
+    schedule_thread = threading.Thread(target=schedule_tasks, args=(db,))
+    schedule_thread.start()
+
+    # Wait for 30 minutes
+    schedule_thread.join(timeout=1800)
+
+    # Start running scheduled tasks in the main thread
     run_scheduled_tasks()
