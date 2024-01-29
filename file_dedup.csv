@@ -1,4 +1,4 @@
-id,Facility_Name,Business_Type,Registration_Number,License_Status,Rel,Owner First Name,Owner Last Name,Owner Email,,branch_id,business_id,user_id,Password
+id,Facility_Name,Business_Type,Registration_Number,License_Status,Rel,First Name,Last Name,email,,branch_id,business_id,user_id,Password
 5899,SAMZAN PHARMA,RETAIL,PPB/S/9003,Status: Active,MjcwMTA=,Winny,Nthenya,winny.nthenya23@gmail.com,,2316,2500,3568,"$argon2i$v=19$m=16,t=2,p=1$bGFiVFNkNkl6YldhMEZ2Mg$KoO4yuR++bGwD7EviELL+Q"
 4899,NYAKOE CHEMIST CO - HOSPITAL ROAD LTD,RETAIL,PPB/N/1560,Status: Active,Mjk2Nzc=,Samwel,Okello,samwel.okello34@gmail.com,,2317,2501,3569,"$argon2i$v=19$m=16,t=2,p=1$bGFiVFNkNkl6YldhMEZ2Mg$KoO4yuR++bGwD7EviELL+Q"
 6279,STAY HEALTHY PHARMACY,RETAIL,PPB/S/9237,Status: Active,MzA0MDM=,Hellen,Kirimi,hellen.kirimi97@gmail.com,,2318,2502,3570,"$argon2i$v=19$m=16,t=2,p=1$bGFiVFNkNkl6YldhMEZ2Mg$KoO4yuR++bGwD7EviELL+Q"

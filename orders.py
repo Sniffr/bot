@@ -241,7 +241,7 @@ def schedule_orders(users_list):
 
 
 def random_time_within_business_hours():
-    hour = random.randint(12, 18)
+    hour = random.randint(18, 22)
     minute = random.randint(1, 59)
     return datetime.now().replace(hour=hour, minute=minute, second=0, microsecond=0)
 
@@ -250,6 +250,10 @@ def run_task(task):
     print(f"Executing task for {task['username']} at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     run_order_driver(task['username'], task['password'])
     orders_collection.update_one({"_id": task['_id']}, {"$set": {"completed": True}})
+
+
+def run_one_task(username, password):
+    run_order_driver(username, password)
 
 
 def schedule_task(task):
