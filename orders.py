@@ -90,7 +90,7 @@ def add_order_items_to_cart(driver):
             (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
         )
     )
-    number_to_add = random.randint(2, 8)
+    number_to_add = random.randint(2, 5)
     buttons = random.sample(add_button_icon, number_to_add)
 
     for button in buttons:
