@@ -309,10 +309,11 @@ if __name__ == '__main__':
     orders_collection = db['orders']
     users_collection = db['users']
     users = users_collection.find({})
-    # Ensure this runs daily at a specified time, e.g., at 8 AM
-    schedule.every().day.at("09:00").do(daily_schedule)
+    daily_schedule()
+       
 
     # run_order_driver("jacksonchesire880@gmail.com","12345678")
     while True:
+        
         schedule.run_pending()
         time.sleep(60)  # Sleep for 1 minute before checking again

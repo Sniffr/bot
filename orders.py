@@ -90,7 +90,7 @@ def add_order_items_to_cart(driver):
             (By.CSS_SELECTOR, "button.MuiIconButton-root svg[data-testid='AddIcon']")
         )
     )
-    number_to_add = random.randint(2, 5)
+    number_to_add = random.randint(2, 8)
     buttons = random.sample(add_button_icon, number_to_add)
 
     for button in buttons:
@@ -103,7 +103,7 @@ def add_order_items_to_cart(driver):
             EC.presence_of_element_located((By.ID, "quantity"))
         )
         quantity_input.clear()
-        quantity_input.send_keys(random.randint(6, 24))
+        quantity_input.send_keys(random.randint(3, 10))
         add_to_cart_button = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Add To Cart')]"))
         )
@@ -206,7 +206,7 @@ def selectprofile(username):
 def run_order_driver(username, password):
     print(f"Running order driver for {username} at {date_time.datetime.now().strftime('%H:%M:%S')}")
     chrome_option = selectprofile(username)
-    driver = webdriver.Firefox()
+    driver = webdriver.Chrome()
     driver.maximize_window()
     print(f"Email: {username}, Password: {password}")
     driver.get("https://business.jungopharm.com/")
@@ -219,10 +219,10 @@ def run_order_driver(username, password):
 
 def schedule_orders(users_list):
     print(f"Scheduling orders for {len(users_list)} users...")
-    accounts_once = random.sample(list(users_list), 25)
+    accounts_once = random.sample(list(users_list), 20)
     for account in accounts_once:
         users_list.remove(account)
-    accounts_twice = 0
+    accounts_twice = random.sample(list(users_list), 1)
     accounts = [{"username": account['email'], "password": "12345678", "order_twice": False} for account in
                 accounts_once]
     accounts.extend(
@@ -241,8 +241,7 @@ def schedule_orders(users_list):
 
 
 def random_time_within_business_hours():
-
-    hour = random.randint(12, 19)
+    hour = random.randint(datetime.now().hour, 22)
     minute = random.randint(1, 59)
     return datetime.now().replace(hour=hour, minute=minute, second=0, microsecond=0)
 

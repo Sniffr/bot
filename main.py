@@ -254,10 +254,10 @@ def create_daily_schedule(users_collection, schedules_collection):
         scheduled_for_user = 0
 
         while scheduled_for_user < num_actions_per_user:
-            times = generate_random_times(num_actions_per_user - scheduled_for_user, 13, 21)
+            times = generate_random_times(num_actions_per_user - scheduled_for_user, 7, 21)
 
             for c_time in times:
-                if scheduled_times.get(c_time, 0) < 3:
+                if scheduled_times.get(c_time, 0) < 4:
                     task_id = ObjectId()
                     schedules_collection.insert_one({
                         '_id': task_id,
