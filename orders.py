@@ -277,10 +277,35 @@ def is_schedule_made_for_today():
     return orders_collection.count_documents({"date": today}) > 0
 
 
+def reschedule_incomplete_tasks():
+    """Reschedules tasks scheduled for today and by the current time but not completed to an hour from now."""
+    now = datetime.now()
+    future_time = now + date_time.timedelta(hours=1)  # An hour from now
+    today_str = now.strftime("%Y-%m-%d")
+
+    # Updating the query to include tasks scheduled for earlier today and not yet completed
+    result = orders_collection.update_many(
+        {
+            "date": today_str,  # Tasks scheduled for today
+            "scheduled_time": {"$lt": now},  # Tasks whose scheduled time is earlier than the current time
+            "completed": False  # Tasks that are not yet completed
+        },
+        {
+            "$set": {
+                "scheduled_time": future_time  # Reschedule these tasks to an hour from now
+            }
+        }
+    )
+    print(f"Rescheduled {result.modified_count} tasks to {future_time.strftime('%Y-%m-%d %H:%M:%S')}.")
+
+
 def run_scheduled_tasks():
     if not is_schedule_made_for_today():
         print("No schedule made for today. Making schedule...")
         schedule_orders(list(users))
+
+    # Reschedule incomplete tasks before starting the scheduling loop
+    reschedule_incomplete_tasks()
 
     print("Starting...")
     schedule_all_tasks()
