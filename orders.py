@@ -142,7 +142,7 @@ def checkout_order(driver):
                                          ".//label[contains(text(), 'Delivery date')]/following-sibling::div//input")
         if not date_input.get_attribute('readonly'):
             date_input.clear()
-            date_input.send_keys((date_time.date.today() + date_time.timedelta(days=1)).strftime("%m/%d/%Y"))
+            date_input.send_keys((date_time.date.today() + date_time.timedelta(days=2)).strftime("%m/%d/%Y"))
 
 
         else:
