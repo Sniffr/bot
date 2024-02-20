@@ -278,26 +278,31 @@ def is_schedule_made_for_today():
 
 
 def reschedule_incomplete_tasks():
-    """Reschedules tasks scheduled for today and by the current time but not completed to an hour from now."""
+    """Reschedules tasks scheduled for today and by the current time but not completed to a random future time within business hours."""
     now = datetime.now()
-    future_time = now + date_time.timedelta(hours=1)  # An hour from now
     today_str = now.strftime("%Y-%m-%d")
 
-    # Updating the query to include tasks scheduled for earlier today and not yet completed
-    result = orders_collection.update_many(
+    # Find tasks for today that are not completed and update their scheduled_time to a random future time within business hours
+    tasks_to_reschedule = orders_collection.find(
         {
             "date": today_str,  # Tasks scheduled for today
             "scheduled_time": {"$lt": now},  # Tasks whose scheduled time is earlier than the current time
             "completed": False  # Tasks that are not yet completed
-        },
-        {
-            "$set": {
-                "scheduled_time": future_time  # Reschedule these tasks to an hour from now
-            }
         }
     )
-    print(f"Rescheduled {result.modified_count} tasks to {future_time.strftime('%Y-%m-%d %H:%M:%S')}.")
 
+    for task in tasks_to_reschedule:
+        future_time = random_time_within_business_hours()
+        orders_collection.update_one(
+            {"_id": task['_id']},
+            {
+                "$set": {
+                    "scheduled_time": future_time
+                }
+            }
+        )
+
+    print(f"Rescheduled tasks to random times within business hours.")
 
 def run_scheduled_tasks():
     if not is_schedule_made_for_today():
