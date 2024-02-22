@@ -132,48 +132,26 @@ def checkout_order(driver):
                 (By.XPATH, "//label[contains(text(), 'Delivery date')]/following-sibling::div//input"))
         )
         delivery_input.click()
-        pen_icon = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.XPATH, "//*[@data-testid='PenIcon']"))
+
+        tomorrow = datetime.now() + date_time.timedelta(days=1)
+        # Extract the day of the month from tomorrow's date
+        tomorrow_day = tomorrow.day
+
+        calendar_container = WebDriverWait(driver, 30).until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, ".MuiDayPicker-slideTransition"))
         )
-        pen_icon.click()
-        dialog = WebDriverWait(driver, 30).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, "div.MuiDialog-paper"))
-        )
-        #
-        date_input = dialog.find_element(By.XPATH,
-                                         ".//label[contains(text(), 'Delivery date')]/following-sibling::div//input")
-        if not date_input.get_attribute('readonly'):
-            future_date_alternative = date_time.date.today() + date_time.timedelta(days=2)
-            # Format the date without slashes
-            formatted_date_alternative = future_date_alternative.strftime("%m%d%Y")  # Adjust the date format as needed
+        day_buttons = calendar_container.find_elements(By.CSS_SELECTOR, "button:not(.Mui-disabled)")
+        for button in day_buttons:
+            if button.text == str(tomorrow_day):
+                button.click()  # Click the button to select tomorrow's date
+                break  # Exit the loop once the correct day has been clicked
 
-            # Click on the input field to ensure it is focused
-            date_input.click()
-            time.sleep(0.5)  # Adding a short delay to ensure the click action is processed
-
-            # Use the HOME key to move the cursor to the start of the input field
-            date_input.send_keys(Keys.HOME)
-
-            # Clear the input field now that the cursor is at the start (if necessary)
-            date_input.clear()
-            time.sleep(0.5)  # Wait a bit after clearing
-
-            # Send each character in the formatted date string one at a time
-            for character in formatted_date_alternative:
-                date_input.send_keys(character)
-                time.sleep(0.1)  # Adjust delay as needed between each key press
-            print("Setting delivery time...", formatted_date_alternative)
-
-
-        else:
-            print("The input field is read-only.")
         ok_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'OK')]"))
         )
         ok_button.click()
 
         # set the value of the delivery here without read only
-        
 
         print("Selecting delivery slot...")
         morning_option = WebDriverWait(driver, 30).until(
@@ -229,7 +207,7 @@ def selectprofile(username):
 def run_order_driver(username, password):
     print(f"Running order driver for {username} at {date_time.datetime.now().strftime('%H:%M:%S')}")
     chrome_option = selectprofile(username)
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(options=chrome_option)
     driver.maximize_window()
     print(f"Email: {username}, Password: {password}")
     driver.get("https://business.jungopharm.com/")
@@ -355,4 +333,4 @@ if __name__ == '__main__':
     # users_collection = db['users']
     # users = users_collection.find({})
     # run_scheduled_tasks()
-    run_one_task("marthagichuru@gmail.com", "12345678")
+    run_one_task("jacksonchesire880@gmail.com", "12345678")
