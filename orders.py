@@ -14,6 +14,41 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+import functools
+import time
+
+
+def retry(exception_to_check, tries=4, delay=3, backoff=2, logger=None):
+    """
+    Retry decorator with exponential backoff.
+
+    Parameters:
+        exception_to_check: Exception or tuple of exceptions to check.
+        tries: Number of attempts. Defaults to 4.
+        delay: Initial delay between retries in seconds. Defaults to 3.
+        backoff: Backoff multiplier. Defaults to 2.
+        logger: Logger instance for logging errors. Defaults to None.
+    """
+
+    def decorator_retry(func):
+        @functools.wraps(func)
+        def wrapper_retry(*args, **kwargs):
+            mtries, mdelay = tries, delay
+            while mtries > 1:
+                try:
+                    return func(*args, **kwargs)
+                except exception_to_check as e:
+                    if logger:
+                        logger.warning(f"Retry {func.__name__}: {e}, Retrying in {mdelay} seconds...")
+                    time.sleep(mdelay)
+                    mtries -= 1
+                    mdelay *= backoff
+            return func(*args, **kwargs)  # Last attempt without catching exceptions
+
+        return wrapper_retry
+
+    return decorator_retry
+
 
 def random_delay(min_seconds, max_seconds):
     time.sleep(random.uniform(min_seconds, max_seconds))
@@ -30,6 +65,7 @@ def human_like_click(element, driver):
     ActionChains(driver).move_to_element(element).click().perform()
     random_delay(0.5, 1)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 
 def login(driver, username, password):
     try:
@@ -55,6 +91,7 @@ def login(driver, username, password):
         print(f"Error logging in for user {username}: {e}")
         driver.quit()
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 
 def handle_modal(driver):
     try:
@@ -71,6 +108,7 @@ def handle_modal(driver):
     except Exception as e:
         print("No modal found or other error: ", e)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 
 def select_belea_pharma(driver):
     try:
@@ -83,6 +121,7 @@ def select_belea_pharma(driver):
     except Exception as e:
         print("Error selecting BelEa Pharma: ", e)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 
 def add_order_items_to_cart(driver):
     print("Adding order items to cart...")
@@ -110,6 +149,7 @@ def add_order_items_to_cart(driver):
         )
         add_to_cart_button.click()
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 
 def checkout_order(driver):
     try:
@@ -175,6 +215,7 @@ def checkout_order(driver):
     except Exception as e:
         print("Error during checkout: ", e)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 
 def makeorder(driver):
     print("Making an order...")
@@ -322,15 +363,15 @@ def run_scheduled_tasks():
 
 
 if __name__ == '__main__':
-    # ca = certifi.where()
-    # connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
-    #                      "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
-    #                      "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
-    #                      "&authSource=admin&retryWrites=true&w=majority")
-    # client = MongoClient(connection_string, tlsCAFile=ca)
-    # db = client['JungoUsers']
-    # orders_collection = db['orders']
-    # users_collection = db['users']
-    # users = users_collection.find({})
-    # run_scheduled_tasks()
-    run_one_task("jacksonchesire880@gmail.com", "12345678")
+    ca = certifi.where()
+    connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
+                         "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
+                         "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
+                         "&authSource=admin&retryWrites=true&w=majority")
+    client = MongoClient(connection_string, tlsCAFile=ca)
+    db = client['JungoUsers']
+    orders_collection = db['orders']
+    users_collection = db['users']
+    users = users_collection.find({})
+    run_scheduled_tasks()
+
