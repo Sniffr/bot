@@ -299,21 +299,19 @@ def daily_schedule():
 
 
 if __name__ == '__main__':
-    ca = certifi.where()
-    connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
-                         "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
-                         "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
-                         "&authSource=admin&retryWrites=true&w=majority")
-    client = MongoClient(connection_string, tlsCAFile=ca)
-    db = client['JungoUsers']
-    orders_collection = db['orders']
-    users_collection = db['users']
-    users = users_collection.find({})
-    daily_schedule()
-       
+    # ca = certifi.where()
+    # connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
+    #                      "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
+    #                      "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
+    #                      "&authSource=admin&retryWrites=true&w=majority")
+    # client = MongoClient(connection_string, tlsCAFile=ca)
+    # db = client['JungoUsers']
+    # orders_collection = db['orders']
+    # users_collection = db['users']
+    # users = users_collection.find({})
+    # daily_schedule()
 
-    # run_order_driver("jacksonchesire880@gmail.com","12345678")
+    run_order_driver("jacksonchesire880@gmail.com", "12345678")
     while True:
-        
         schedule.run_pending()
         time.sleep(60)  # Sleep for 1 minute before checking again
