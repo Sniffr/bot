@@ -365,15 +365,14 @@ def run_scheduled_tasks():
 
 
 if __name__ == '__main__':
-    # ca = certifi.where()
-    # connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
-    #                      "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
-    #                      "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
-    #                      "&authSource=admin&retryWrites=true&w=majority")
-    # client = MongoClient(connection_string, tlsCAFile=ca)
-    # db = client['JungoUsers']
-    # orders_collection = db['orders']
-    # users_collection = db['users']
-    # users = users_collection.find({})
-    # run_scheduled_tasks()
-    run_one_task("daniel.muli8340@gmail.com", "12345678")
+    ca = certifi.where()
+    connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
+                         "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
+                         "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
+                         "&authSource=admin&retryWrites=true&w=majority")
+    client = MongoClient(connection_string, tlsCAFile=ca)
+    db = client['JungoUsers']
+    orders_collection = db['orders']
+    users_collection = db['users']
+    users = users_collection.find({})
+    run_scheduled_tasks()
