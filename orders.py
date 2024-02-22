@@ -7,6 +7,7 @@ import certifi
 import schedule
 from pymongo import MongoClient
 from selenium import webdriver
+from selenium.webdriver import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -138,11 +139,30 @@ def checkout_order(driver):
         dialog = WebDriverWait(driver, 30).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, "div.MuiDialog-paper"))
         )
+        #
         date_input = dialog.find_element(By.XPATH,
                                          ".//label[contains(text(), 'Delivery date')]/following-sibling::div//input")
         if not date_input.get_attribute('readonly'):
+            future_date_alternative = date_time.date.today() + date_time.timedelta(days=2)
+            # Format the date without slashes
+            formatted_date_alternative = future_date_alternative.strftime("%m%d%Y")  # Adjust the date format as needed
+
+            # Click on the input field to ensure it is focused
+            date_input.click()
+            time.sleep(0.5)  # Adding a short delay to ensure the click action is processed
+
+            # Use the HOME key to move the cursor to the start of the input field
+            date_input.send_keys(Keys.HOME)
+
+            # Clear the input field now that the cursor is at the start (if necessary)
             date_input.clear()
-            date_input.send_keys((date_time.date.today() + date_time.timedelta(days=2)).strftime("%m/%d/%Y"))
+            time.sleep(0.5)  # Wait a bit after clearing
+
+            # Send each character in the formatted date string one at a time
+            for character in formatted_date_alternative:
+                date_input.send_keys(character)
+                time.sleep(0.1)  # Adjust delay as needed between each key press
+            print("Setting delivery time...", formatted_date_alternative)
 
 
         else:
@@ -151,6 +171,9 @@ def checkout_order(driver):
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'OK')]"))
         )
         ok_button.click()
+
+        # set the value of the delivery here without read only
+        
 
         print("Selecting delivery slot...")
         morning_option = WebDriverWait(driver, 30).until(
@@ -304,6 +327,7 @@ def reschedule_incomplete_tasks():
 
     print(f"Rescheduled tasks to random times within business hours.")
 
+
 def run_scheduled_tasks():
     if not is_schedule_made_for_today():
         print("No schedule made for today. Making schedule...")
@@ -320,14 +344,15 @@ def run_scheduled_tasks():
 
 
 if __name__ == '__main__':
-    ca = certifi.where()
-    connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
-                         "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
-                         "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
-                         "&authSource=admin&retryWrites=true&w=majority")
-    client = MongoClient(connection_string, tlsCAFile=ca)
-    db = client['JungoUsers']
-    orders_collection = db['orders']
-    users_collection = db['users']
-    users = users_collection.find({})
-    run_scheduled_tasks()
+    # ca = certifi.where()
+    # connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
+    #                      "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
+    #                      "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
+    #                      "&authSource=admin&retryWrites=true&w=majority")
+    # client = MongoClient(connection_string, tlsCAFile=ca)
+    # db = client['JungoUsers']
+    # orders_collection = db['orders']
+    # users_collection = db['users']
+    # users = users_collection.find({})
+    # run_scheduled_tasks()
+    run_one_task("marthagichuru@gmail.com", "12345678")
