@@ -65,8 +65,8 @@ def human_like_click(element, driver):
     ActionChains(driver).move_to_element(element).click().perform()
     random_delay(0.5, 1)
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 def login(driver, username, password):
     try:
         print(f"Logging in user: {username}")
@@ -91,8 +91,8 @@ def login(driver, username, password):
         print(f"Error logging in for user {username}: {e}")
         driver.quit()
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 def handle_modal(driver):
     try:
         print("Checking for modal...")
@@ -108,8 +108,8 @@ def handle_modal(driver):
     except Exception as e:
         print("No modal found or other error: ", e)
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 def select_belea_pharma(driver):
     try:
         print("Attempting to select BelEa Pharma...")
@@ -121,8 +121,8 @@ def select_belea_pharma(driver):
     except Exception as e:
         print("Error selecting BelEa Pharma: ", e)
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 def add_order_items_to_cart(driver):
     print("Adding order items to cart...")
     add_button_icon = WebDriverWait(driver, 30).until(
@@ -149,8 +149,8 @@ def add_order_items_to_cart(driver):
         )
         add_to_cart_button.click()
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 def checkout_order(driver):
     try:
         print("Proceeding to checkout...")
@@ -215,8 +215,8 @@ def checkout_order(driver):
     except Exception as e:
         print("Error during checkout: ", e)
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 
+@retry(Exception, tries=3, delay=2, backoff=2)
 def makeorder(driver):
     print("Making an order...")
     orders_button = WebDriverWait(driver, 30).until(
@@ -238,10 +238,12 @@ def selectprofile(username):
     if not os.path.exists(profile_path):
         os.makedirs(profile_path)
     chrome_options = Options()
-    min_width, min_height = 1400, 1000
-    random_width = random.randint(min_width, min_width)
-    random_height = random.randint(min_height, min_height)
+    min_width, min_height = 1600, 720
+    max_width, max_height = 1920, 1440
+    random_width = random.randint(min_width, max_width)
+    random_height = random.randint(min_height, max_height)
     chrome_options.add_argument(f"--window-size={random_width},{random_height}")
+    print(f"Window size: {random_width}x{random_height}")
     return chrome_options
 
 
@@ -363,15 +365,15 @@ def run_scheduled_tasks():
 
 
 if __name__ == '__main__':
-    ca = certifi.where()
-    connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
-                         "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
-                         "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
-                         "&authSource=admin&retryWrites=true&w=majority")
-    client = MongoClient(connection_string, tlsCAFile=ca)
-    db = client['JungoUsers']
-    orders_collection = db['orders']
-    users_collection = db['users']
-    users = users_collection.find({})
-    run_scheduled_tasks()
-
+    # ca = certifi.where()
+    # connection_string = ("mongodb://archer:malingu@ac-r0bcexe-shard-00-00.h5wj3us.mongodb.net:27017,"
+    #                      "ac-r0bcexe-shard-00-01.h5wj3us.mongodb.net:27017,"
+    #                      "ac-r0bcexe-shard-00-02.h5wj3us.mongodb.net:27017/?ssl=true&replicaSet=atlas-gvmkrc-shard-0"
+    #                      "&authSource=admin&retryWrites=true&w=majority")
+    # client = MongoClient(connection_string, tlsCAFile=ca)
+    # db = client['JungoUsers']
+    # orders_collection = db['orders']
+    # users_collection = db['users']
+    # users = users_collection.find({})
+    # run_scheduled_tasks()
+    run_one_task("daniel.muli8340@gmail.com", "12345678")
