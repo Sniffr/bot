@@ -263,7 +263,7 @@ def run_order_driver(username, password):
 
 def schedule_orders(users_list):
     print(f"Scheduling orders for {len(users_list)} users...")
-    accounts_once = random.sample(list(users_list), 50)
+    accounts_once = random.sample(list(users_list), 100)
     for account in accounts_once:
         users_list.remove(account)
     accounts_twice = random.sample(list(users_list), 0)
