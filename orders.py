@@ -12,7 +12,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import   WebDriverWait
 
 import functools
 import time
@@ -263,7 +263,7 @@ def run_order_driver(username, password):
 
 def schedule_orders(users_list):
     print(f"Scheduling orders for {len(users_list)} users...")
-    accounts_once = random.sample(list(users_list), 100)
+    accounts_once = random.sample(list(users_list), random.randint(40, 70))
     for account in accounts_once:
         users_list.remove(account)
     accounts_twice = random.sample(list(users_list), 0)

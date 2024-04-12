@@ -198,7 +198,9 @@ def selectprofile(username):
 
     # Set the window size
     chrome_options.add_argument(f"--window-size={random_width},{random_height}")
-    # chrome_options.add_argument("--headless")
+
+    # Minimize the Chrome window
+    chrome_options.add_argument("--start-minimized")
 
     return chrome_options
 
