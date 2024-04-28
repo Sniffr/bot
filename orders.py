@@ -12,42 +12,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import   WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait
 
 import functools
 import time
-
-
-def retry(exception_to_check, tries=4, delay=3, backoff=2, logger=None):
-    """
-    Retry decorator with exponential backoff.
-
-    Parameters:
-        exception_to_check: Exception or tuple of exceptions to check.
-        tries: Number of attempts. Defaults to 4.
-        delay: Initial delay between retries in seconds. Defaults to 3.
-        backoff: Backoff multiplier. Defaults to 2.
-        logger: Logger instance for logging errors. Defaults to None.
-    """
-
-    def decorator_retry(func):
-        @functools.wraps(func)
-        def wrapper_retry(*args, **kwargs):
-            mtries, mdelay = tries, delay
-            while mtries > 1:
-                try:
-                    return func(*args, **kwargs)
-                except exception_to_check as e:
-                    if logger:
-                        logger.warning(f"Retry {func.__name__}: {e}, Retrying in {mdelay} seconds...")
-                    time.sleep(mdelay)
-                    mtries -= 1
-                    mdelay *= backoff
-            return func(*args, **kwargs)  # Last attempt without catching exceptions
-
-        return wrapper_retry
-
-    return decorator_retry
 
 
 def random_delay(min_seconds, max_seconds):
@@ -66,9 +34,7 @@ def human_like_click(element, driver):
     random_delay(0.5, 1)
 
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 def login(driver, username, password):
-    try:
         print(f"Logging in user: {username}")
         email_field = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.ID, "email"))
@@ -87,14 +53,10 @@ def login(driver, username, password):
         )
         human_like_click(login_button, driver)
 
-    except Exception as e:
-        print(f"Error logging in for user {username}: {e}")
-        driver.quit()
 
 
-@retry(Exception, tries=3, delay=2, backoff=2)
+
 def handle_modal(driver):
-    try:
         print("Checking for modal...")
         WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, ".MuiBox-root"))
@@ -105,24 +67,18 @@ def handle_modal(driver):
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Dismiss')]")))
         human_like_click(dismiss_button, driver)
 
-    except Exception as e:
-        print("No modal found or other error: ", e)
 
 
-@retry(Exception, tries=3, delay=2, backoff=2)
+
 def select_belea_pharma(driver):
-    try:
         print("Attempting to select BelEa Pharma...")
         belea_pharma_element = WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'Belea Pharmaceuticals Limited')]"))
         )
         belea_pharma_element.click()
         print("BelEa Pharma selected.")
-    except Exception as e:
-        print("Error selecting BelEa Pharma: ", e)
 
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 def add_order_items_to_cart(driver):
     print("Adding order items to cart...")
     add_button_icon = WebDriverWait(driver, 30).until(
@@ -150,9 +106,7 @@ def add_order_items_to_cart(driver):
         add_to_cart_button.click()
 
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 def checkout_order(driver):
-    try:
         print("Proceeding to checkout...")
         checkout_button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Checkout')]"))
@@ -212,11 +166,8 @@ def checkout_order(driver):
         confirm_button.click()
         print("Order placed successfully.")
 
-    except Exception as e:
-        print("Error during checkout: ", e)
 
 
-@retry(Exception, tries=3, delay=2, backoff=2)
 def makeorder(driver):
     print("Making an order...")
     orders_button = WebDriverWait(driver, 30).until(
@@ -263,14 +214,16 @@ def run_order_driver(username, password):
 
 def schedule_orders(users_list):
     print(f"Scheduling orders for {len(users_list)} users...")
-    accounts_once = random.sample(list(users_list), random.randint(40, 70))
+    accounts_once = random.sample(list(users_list), random.randint(60, 90))
     for account in accounts_once:
         users_list.remove(account)
     accounts_twice = random.sample(list(users_list), 0)
     accounts = [{"username": account['email'], "password": "12345678", "order_twice": False} for account in
                 accounts_once]
     accounts.extend(
-        [{"username": account['email'], "password": "12345678", "order_twice": True} for account in accounts_twice])
+        [{"username": account['email'],
+          "password": "12                                                           pph 345678", "order_twice": True}
+         for account in accounts_twice])
     for account in accounts:
         num_orders = 2 if account['order_twice'] else 1
         for _ in range(num_orders):
@@ -292,8 +245,12 @@ def random_time_within_business_hours():
 
 def run_task(task):
     print(f"Executing task for {task['username']} at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    run_order_driver(task['username'], task['password'])
-    orders_collection.update_one({"_id": task['_id']}, {"$set": {"completed": True}})
+    try:
+        run_order_driver(task['username'], task['password'])
+        orders_collection.update_one({"_id": task['_id']}, {"$set": {"completed": True}})
+    except Exception as e:
+        print(f"Error occurred while executing task for {task['username']}: {str(e)}")
+        reschedule_task(task)
 
 
 def run_one_task(username, password):
@@ -362,6 +319,18 @@ def run_scheduled_tasks():
     while True:
         schedule.run_pending()
         time.sleep(1)
+def reschedule_task(task):
+    future_time = random_time_within_business_hours()
+    orders_collection.update_one(
+        {"_id": task['_id']},
+        {
+            "$set": {
+                "scheduled_time": future_time,
+                "completed": False
+            }
+        }
+    )
+    print(f"Rescheduled task for {task['username']} to {future_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 
 if __name__ == '__main__':
