@@ -77,6 +77,13 @@ def select_belea_pharma(driver):
         )
         belea_pharma_element.click()
         print("BelEa Pharma selected.")
+def select_sai_pharma(driver):
+        print("Attempting to select sai Pharma...")
+        belea_pharma_element = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'PharmaCentre LTD')]"))
+        )
+        belea_pharma_element.click()
+        print("BelEa Pharma selected.")
 
 
 def add_order_items_to_cart(driver):
@@ -168,7 +175,7 @@ def checkout_order(driver):
 
 
 
-def makeorder(driver):
+def makeorder(driver, pharma):
     print("Making an order...")
     orders_button = WebDriverWait(driver, 30).until(
         EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'Order Products')]"))
@@ -177,7 +184,12 @@ def makeorder(driver):
     WebDriverWait(driver, 30).until(
         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "button.MuiIconButton-root"))
     )
-    select_belea_pharma(driver)
+
+    if pharma == "Sai Pharma":
+        select_sai_pharma(driver)
+    else:
+        select_belea_pharma(driver)
+
     add_order_items_to_cart(driver)
     checkout_order(driver)
 
@@ -198,7 +210,7 @@ def selectprofile(username):
     return chrome_options
 
 
-def run_order_driver(username, password):
+def run_order_driver(username, password, pharma):
     print(f"Running order driver for {username} at {date_time.datetime.now().strftime('%H:%M:%S')}")
     chrome_option = selectprofile(username)
     driver = webdriver.Chrome(options=chrome_option)
@@ -207,14 +219,14 @@ def run_order_driver(username, password):
     driver.get("https://business.jungopharm.com/")
     login(driver, username, password)
     handle_modal(driver)
-    makeorder(driver)
+    makeorder(driver, pharma)
     time.sleep(30)
     driver.quit()
 
 
 def schedule_orders(users_list):
     print(f"Scheduling orders for {len(users_list)} users...")
-    accounts_once = random.sample(list(users_list), random.randint(60, 90))
+    accounts_once = random.sample(list(users_list), random.randint(160, 210))
     for account in accounts_once:
         users_list.remove(account)
     accounts_twice = random.sample(list(users_list), 0)
@@ -222,9 +234,18 @@ def schedule_orders(users_list):
                 accounts_once]
     accounts.extend(
         [{"username": account['email'],
-          "password": "12                                                           pph 345678", "order_twice": True}
+          "password": "12345678", "order_twice": True}
          for account in accounts_twice])
-    for account in accounts:
+
+    # Shuffle the accounts to ensure equal distribution between Sai Pharma and Belea Pharma
+    random.shuffle(accounts)
+
+    # Split the accounts into two equal halves
+    half = len(accounts) // 2
+    sai_pharma_accounts = accounts[:half]
+    belea_pharma_accounts = accounts[half:]
+
+    for account in sai_pharma_accounts:
         num_orders = 2 if account['order_twice'] else 1
         for _ in range(num_orders):
             scheduled_time = random_time_within_business_hours()
@@ -233,7 +254,21 @@ def schedule_orders(users_list):
                 "password": account['password'],
                 "scheduled_time": scheduled_time,
                 "date": datetime.now().strftime("%Y-%m-%d"),
-                "completed": False
+                "completed": False,
+                "pharma": "Sai Pharma"
+            })
+
+    for account in belea_pharma_accounts:
+        num_orders = 2 if account['order_twice'] else 1
+        for _ in range(num_orders):
+            scheduled_time = random_time_within_business_hours()
+            orders_collection.insert_one({
+                "username": account['username'],
+                "password": account['password'],
+                "scheduled_time": scheduled_time,
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "completed": False,
+                "pharma": "Belea Pharma"
             })
 
 
@@ -246,7 +281,7 @@ def random_time_within_business_hours():
 def run_task(task):
     print(f"Executing task for {task['username']} at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     try:
-        run_order_driver(task['username'], task['password'])
+        run_order_driver(task['username'], task['password'], task['pharma'])
         orders_collection.update_one({"_id": task['_id']}, {"$set": {"completed": True}})
     except Exception as e:
         print(f"Error occurred while executing task for {task['username']}: {str(e)}")
