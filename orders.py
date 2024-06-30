@@ -35,55 +35,53 @@ def human_like_click(element, driver):
 
 
 def login(driver, username, password):
-        print(f"Logging in user: {username}")
-        email_field = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.ID, "email"))
-        )
-        type_like_human(email_field, username)
-        random_delay(1, 2)
+    print(f"Logging in user: {username}")
+    email_field = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.ID, "email"))
+    )
+    type_like_human(email_field, username)
+    random_delay(1, 2)
 
-        password_field = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.ID, "password"))
-        )
-        type_like_human(password_field, password)
-        random_delay(1, 2)
+    password_field = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.ID, "password"))
+    )
+    type_like_human(password_field, password)
+    random_delay(1, 2)
 
-        login_button = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Login')]"))
-        )
-        human_like_click(login_button, driver)
-
-
+    login_button = WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Login')]"))
+    )
+    human_like_click(login_button, driver)
 
 
 def handle_modal(driver):
-        print("Checking for modal...")
-        WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".MuiBox-root"))
-        )
-        random_delay(1, 2)
+    print("Checking for modal...")
+    WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, ".MuiBox-root"))
+    )
+    random_delay(1, 2)
 
-        dismiss_button = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Dismiss')]")))
-        human_like_click(dismiss_button, driver)
-
-
+    dismiss_button = WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Dismiss')]")))
+    human_like_click(dismiss_button, driver)
 
 
 def select_belea_pharma(driver):
-        print("Attempting to select BelEa Pharma...")
-        belea_pharma_element = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'Belea Pharmaceuticals Limited')]"))
-        )
-        belea_pharma_element.click()
-        print("BelEa Pharma selected.")
+    print("Attempting to select BelEa Pharma...")
+    belea_pharma_element = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'Belea Pharmaceuticals Limited')]"))
+    )
+    belea_pharma_element.click()
+    print("BelEa Pharma selected.")
+
+
 def select_sai_pharma(driver):
-        print("Attempting to select sai Pharma...")
-        belea_pharma_element = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'PharmaCentre LTD')]"))
-        )
-        belea_pharma_element.click()
-        print("BelEa Pharma selected.")
+    print("Attempting to select sai Pharma...")
+    belea_pharma_element = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.XPATH, "//h6[contains(text(), 'PharmaCentre LTD')]"))
+    )
+    belea_pharma_element.click()
+    print("BelEa Pharma selected.")
 
 
 def add_order_items_to_cart(driver):
@@ -114,68 +112,86 @@ def add_order_items_to_cart(driver):
 
 
 def checkout_order(driver):
-        print("Proceeding to checkout...")
-        checkout_button = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Checkout')]"))
+    print("Proceeding to checkout...")
+    checkout_button = WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Checkout')]"))
+    )
+    x = checkout_button.location['x']
+    y = checkout_button.location['y']
+    driver.execute_script("window.scrollTo({}, {});".format(x, y - 100))
+    checkout_button.click()
+    cash_option = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'M-Pesa on delivery')]"))
+    )
+    driver.execute_script("arguments[0].click();", cash_option)
+
+
+
+    print("Setting delivery date to tomorrow...")
+    delivery_input = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located(
+            (By.XPATH, "//label[contains(text(), 'Delivery date')]/following-sibling::div//input"))
+    )
+    delivery_input.click()
+
+    tomorrow = datetime.now() + date_time.timedelta(days=1)
+
+    # Check if tomorrow is in the next month
+    if tomorrow.month != datetime.now().month:
+        print("Selecting next month...")
+        next_month_button = WebDriverWait(driver, 30).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[@title='Next month']"))
         )
-        x = checkout_button.location['x']
-        y = checkout_button.location['y']
-        driver.execute_script("window.scrollTo({}, {});".format(x, y - 100))
-        checkout_button.click()
-        cash_option = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'M-Pesa on delivery')]"))
-        )
-        driver.execute_script("arguments[0].click();", cash_option)
+        next_month_button.click()
+        time.sleep(1)  # Wait for the calendar to update
 
-        print("Setting delivery date to tomorrow...")
-        delivery_input = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located(
-                (By.XPATH, "//label[contains(text(), 'Delivery date')]/following-sibling::div//input"))
-        )
-        delivery_input.click()
+    # Extract the day of the month from tomorrow's date
+    tomorrow_day = tomorrow.day
 
-        tomorrow = datetime.now() + date_time.timedelta(days=1)
-        # Extract the day of the month from tomorrow's date
-        tomorrow_day = tomorrow.day
+    calendar_container = WebDriverWait(driver, 30).until(
+        EC.visibility_of_element_located((By.CSS_SELECTOR, ".MuiDayPicker-slideTransition"))
+    )
+    day_buttons = calendar_container.find_elements(By.CSS_SELECTOR, "button:not(.Mui-disabled)")
+    for button in day_buttons:
+        if button.text == str(tomorrow_day):
+            button.click()  # Click the button to select tomorrow's date
+            break  # Exit the loop once the correct day has been clicked
 
-        calendar_container = WebDriverWait(driver, 30).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, ".MuiDayPicker-slideTransition"))
-        )
-        day_buttons = calendar_container.find_elements(By.CSS_SELECTOR, "button:not(.Mui-disabled)")
-        for button in day_buttons:
-            if button.text == str(tomorrow_day):
-                button.click()  # Click the button to select tomorrow's date
-                break  # Exit the loop once the correct day has been clicked
+    ok_button = WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'OK')]"))
+    )
+    ok_button.click()
 
-        ok_button = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'OK')]"))
-        )
-        ok_button.click()
+    # Wait for the date picker modal to disappear
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".MuiPickersPopper-root"))
+    )
 
-        # set the value of the delivery here without read only
+    print("Selecting delivery slot...")
+    # Use JavaScript to scroll the options into view and click
+    slot_options = {
+        "MORNING": "//button[@id='MORNING']",
+        "MID_MORNING": "//button[@id='MID_MORNING']",
+        "AFTERNOON": "//button[@id='AFTERNOON']"
+    }
+    selected_slot = random.choice(list(slot_options.keys()))
+    slot_xpath = slot_options[selected_slot]
 
-        print("Selecting delivery slot...")
-        morning_option = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.ID, "MORNING"))
-        )
-        afternoon_option = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.ID, "MID_MORNING"))
-        )
-        midday_option = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.ID, "AFTERNOON"))
-        )
-        option = random.choice([morning_option, afternoon_option, midday_option])
-        option.click()
+    slot_element = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.XPATH, slot_xpath))
+    )
+    driver.execute_script("arguments[0].scrollIntoView(true);", slot_element)
+    time.sleep(1)  # Give time for any animations to complete
+    driver.execute_script("arguments[0].click();", slot_element)
 
-        confirm_button = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Place Order')]"))
-        )
-        confirm_button.click()
-        print("Order placed successfully.")
+    confirm_button = WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Place Order')]"))
+    )
+    confirm_button.click()
+    print("Order placed successfully.")
 
 
-
-def makeorder(driver, pharma):
+def makeorder(driver):
     print("Making an order...")
     orders_button = WebDriverWait(driver, 30).until(
         EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'Order Products')]"))
@@ -185,10 +201,7 @@ def makeorder(driver, pharma):
         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "button.MuiIconButton-root"))
     )
 
-    if pharma == "Sai Pharma":
-        select_sai_pharma(driver)
-    else:
-        select_belea_pharma(driver)
+    select_belea_pharma(driver)
 
     add_order_items_to_cart(driver)
     checkout_order(driver)
@@ -210,16 +223,16 @@ def selectprofile(username):
     return chrome_options
 
 
-def run_order_driver(username, password, pharma):
+def run_order_driver(username, password):
     print(f"Running order driver for {username} at {date_time.datetime.now().strftime('%H:%M:%S')}")
     chrome_option = selectprofile(username)
     driver = webdriver.Chrome(options=chrome_option)
     driver.maximize_window()
     print(f"Email: {username}, Password: {password}")
-    driver.get("https://business.jungopharm.com/")
+    driver.get("https://jng-main-2-72c5t.ondigitalocean.app/")
     login(driver, username, password)
     handle_modal(driver)
-    makeorder(driver, pharma)
+    makeorder(driver)
     time.sleep(30)
     driver.quit()
 
@@ -241,9 +254,8 @@ def schedule_orders(users_list):
     random.shuffle(accounts)
 
     # Split the accounts into two equal halves
-    half = len(accounts) // 2
-    sai_pharma_accounts = accounts[:half]
-    belea_pharma_accounts = accounts[half:]
+
+    sai_pharma_accounts = accounts
 
     for account in sai_pharma_accounts:
         num_orders = 2 if account['order_twice'] else 1
@@ -258,18 +270,18 @@ def schedule_orders(users_list):
                 "pharma": "Sai Pharma"
             })
 
-    for account in belea_pharma_accounts:
-        num_orders = 2 if account['order_twice'] else 1
-        for _ in range(num_orders):
-            scheduled_time = random_time_within_business_hours()
-            orders_collection.insert_one({
-                "username": account['username'],
-                "password": account['password'],
-                "scheduled_time": scheduled_time,
-                "date": datetime.now().strftime("%Y-%m-%d"),
-                "completed": False,
-                "pharma": "Belea Pharma"
-            })
+    # for account in belea_pharma_accounts:
+    #     num_orders = 2 if account['order_twice'] else 1
+    #     for _ in range(num_orders):
+    #         scheduled_time = random_time_within_business_hours()
+    #         orders_collection.insert_one({
+    #             "username": account['username'],
+    #             "password": account['password'],
+    #             "scheduled_time": scheduled_time,
+    #             "date": datetime.now().strftime("%Y-%m-%d"),
+    #             "completed": False,
+    #             "pharma": "Belea Pharma"
+    #         })
 
 
 def random_time_within_business_hours():
@@ -281,7 +293,7 @@ def random_time_within_business_hours():
 def run_task(task):
     print(f"Executing task for {task['username']} at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     try:
-        run_order_driver(task['username'], task['password'], task['pharma'])
+        run_order_driver(task['username'], task['password'])
         orders_collection.update_one({"_id": task['_id']}, {"$set": {"completed": True}})
     except Exception as e:
         print(f"Error occurred while executing task for {task['username']}: {str(e)}")
@@ -354,6 +366,8 @@ def run_scheduled_tasks():
     while True:
         schedule.run_pending()
         time.sleep(1)
+
+
 def reschedule_task(task):
     future_time = random_time_within_business_hours()
     orders_collection.update_one(
@@ -379,4 +393,6 @@ if __name__ == '__main__':
     orders_collection = db['orders']
     users_collection = db['users']
     users = users_collection.find({})
-    run_scheduled_tasks()
+    # run_scheduled_tasks()
+    user = list(users)[0]
+    run_one_task(user['email'], "12345678")
