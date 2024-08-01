@@ -229,7 +229,6 @@ def run_order_driver(username, password):
     driver = webdriver.Chrome(options=chrome_option)
     driver.maximize_window()
     print(f"Email: {username}, Password: {password}")
-    driver.get("https://jng-main-2-72c5t.ondigitalocean.app/")
     login(driver, username, password)
     handle_modal(driver)
     makeorder(driver)
