@@ -229,6 +229,7 @@ def run_order_driver(username, password):
     driver = webdriver.Chrome(options=chrome_option)
     driver.maximize_window()
     print(f"Email: {username}, Password: {password}")
+    driver.get("https://jng-main-2-72c5t.ondigitalocean.app/")
     login(driver, username, password)
     handle_modal(driver)
     makeorder(driver)
@@ -392,6 +393,6 @@ if __name__ == '__main__':
     orders_collection = db['orders']
     users_collection = db['users']
     users = users_collection.find({})
-    run_scheduled_tasks()
-    # user = list(users)[0]
-    # run_one_task(user['email'], "12345678")
+    # run_scheduled_tasks()
+    user = list(users)[0]
+    run_one_task(user['email'], "12345678")
